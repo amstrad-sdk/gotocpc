@@ -1,12 +1,9 @@
-import json
-import subprocess
 import click
-import shutil
 import os
 import sys
 import configparser
 
-from .common import consoleMessage, ConsoleColor, getFileExt, checkProjectValue
+from .common import consoleMessage, ConsoleColor, checkProjectValue, removeComments, convert2Dos, concatBasFiles
 from .project import readProjectIni
 
 
@@ -26,14 +23,16 @@ def main(file, mode):
     ##
     # Define Variables
     ##
-
+    config = configparser.ConfigParser()
     PROJECT_DATA = readProjectIni(PROJECT_FILE)
+    PROJECT_NOT_SECTIONS = ["PROJECT", "CONCATENATE", "RVM"]
     PROJECT_NAME = PROJECT_DATA.get('PROJECT', {}).get('name')
     PROJECT_CONCAT_SOURCE = PROJECT_DATA.get('CONCATENATE', {}).get('source')
     PROJECT_CONCAT_OUT = PROJECT_DATA.get('CONCATENATE', {}).get('out')
     PROJECT_RVM_SYSTEM = PROJECT_DATA.get('RVM', {}).get('system')
     PROJECT_RVM_MODEL = PROJECT_DATA.get('RVM', {}).get('model')
     PROJECT_RVM_RUN = PROJECT_DATA.get('RVM', {}).get('run')
+    PROJECT_BAS_FILE_1 = PROJECT_DATA.get('BAS_FILES', {}).get('file_1')
     PROJECT_DISC = "disc"
 
     ##
@@ -43,6 +42,7 @@ def main(file, mode):
     checkProjectValue("Project --> name", PROJECT_NAME)
     checkProjectValue("Project --> system", PROJECT_RVM_SYSTEM)
     checkProjectValue("Project --> model", PROJECT_RVM_MODEL)
+    checkProjectValue("Bas Files --> file_!", PROJECT_BAS_FILE_1)
 
     ##
     # Check the disc folder
@@ -50,31 +50,27 @@ def main(file, mode):
     if not os.path.exists(PROJECT_DISC):
         os.makedirs(PROJECT_DISC)
 
-    config = configparser.ConfigParser()
-
-    # Leer el archivo INI
     config.read(PROJECT_FILE)
 
-    # Recorrer las secciones del archivo INI
     for section in config.sections():
-        # Imprimir el nombre de la sección
-        if section != "project".upper() or section != "concatenate".upper() or section != "rvm".upper():
-            print(f"[{section}]")
+        if section not in PROJECT_NOT_SECTIONS:
+            for key, value in config.items(section):
+                # BAS FILE PROCESSING
+                if section.upper() == "BAS_FILES":
+                    if not os.path.isfile(f"src/{value}"):
+                        print(
+                            consoleMessage(f"\nERROR: The src/{value} file does not exist.", ConsoleColor.RED))
+                        sys.exit(1)
+                    removeComments(f"src/{value}", f"disc/{value}")
+                    convert2Dos(f"disc/{value}", f"disc/{value}")
 
-        # Recorrer las claves y valores de cada sección
-        for clave, valor in config.items(section):
-            print(f"{clave} = {valor}")
-
-        print()  # Imprimir una línea en blanco entre secciones
-
-    # if file is not None and mode is not None:
-    #     # Se pasaron los parámetros -f y -m
-    #     # Hacer algo con file y mode
-    #     click.echo(f'Se pasaron los parámetros -f {file} y -m {mode}')
-    # else:
-    #     # No se pasaron los parámetros -f y -m
-    #     # Hacer algo diferente
-    #     click.echo('No se pasaron los parámetros -f y -m')
+    if PROJECT_CONCAT_SOURCE != "" and PROJECT_CONCAT_SOURCE is not None:
+        concatBasFiles(PROJECT_CONCAT_SOURCE, PROJECT_CONCAT_OUT, PROJECT_DISC)
+        convert2Dos(f"disc/{PROJECT_CONCAT_OUT}", f"disc/{PROJECT_CONCAT_OUT}")
+    else:
+        section = consoleMessage(f"[BAS_FILES]:", ConsoleColor.BLUE)
+        message = consoleMessage("[warning] Not concat files.", ConsoleColor.YELLOW)
+        print(section + message)
 
 
 if __name__ == '__main__':

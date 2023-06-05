@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 class ConsoleColor:
     GREEN = '\033[92m'
     YELLOW = '\033[93m'
@@ -10,12 +11,11 @@ class ConsoleColor:
     RESET = '\033[0m'
 
 
-
-
 def checkProjectValue(text, value):
     if value is None or value == "":
-        print(consoleMessage("\nERROR: The " + str(text) + " key does not exist or has no value.",ConsoleColor.RED))
+        print(consoleMessage("\nERROR: The " + str(text) + " key does not exist or has no value.", ConsoleColor.RED))
         sys.exit(1)
+
 
 ##
 # Print message color
@@ -26,6 +26,7 @@ def checkProjectValue(text, value):
 def consoleMessage(text, color):
     colored_text = f"{color}{text}{ConsoleColor.RESET}"
     return colored_text
+
 
 # Ejemplo de uso
 # print_colored("Texto en verde", ConsoleColor.GREEN)
@@ -43,6 +44,7 @@ def getFile(source):
     file_name = os.path.splitext(file_name)[0]
     return file_name
 
+
 ##
 # Get file and extension
 #
@@ -51,6 +53,7 @@ def getFile(source):
 def getFileExt(source):
     file_name = os.path.basename(source)
     return file_name
+
 
 ##
 # Get extension file
@@ -61,6 +64,7 @@ def getFileExtension(source):
     file_extension = os.path.splitext(source)[1]
     return file_extension
 
+
 ##
 # Remove comment lines
 #
@@ -68,6 +72,14 @@ def getFileExtension(source):
 # @param output: output filename
 ##
 def removeComments(source, output):
+    global file
+    if not os.path.exists(source):
+        section = consoleMessage(f"[BAS_FILES]:[{getFileExt(source)}] ", ConsoleColor.BLUE)
+        message = consoleMessage("The file does not exist.", ConsoleColor.RED)
+        print(section + message)
+        endCompilation()
+        sys.exit(1)
+
     with open(source, 'r') as file:
         lines = file.readlines()
 
@@ -75,6 +87,11 @@ def removeComments(source, output):
 
     with open(output, 'w') as file:
         file.writelines(filtered_lines)
+    file = getFileExt(source)
+    section = consoleMessage(f"[BAS_FILES]:[{file}] ", ConsoleColor.BLUE)
+    message = consoleMessage("File Comments Removed.", ConsoleColor.GREEN)
+    print(section + message)
+
 
 ##
 # Conver unix2dos files
@@ -82,7 +99,13 @@ def removeComments(source, output):
 # @param source: source filename
 # @param output: output filename
 ##
-def convert2Dos(source,output):
+def convert2Dos(source, output):
+    if not os.path.exists(source):
+        section = consoleMessage(f"[BAS_FILES]:[{getFileExt(source)}] ", ConsoleColor.BLUE)
+        message = consoleMessage("The file does not exist.", ConsoleColor.RED)
+        print(section + message)
+        endCompilation()
+        sys.exit(1)
     with open(source, 'r') as file:
         unix_lines = file.readlines()
 
@@ -91,6 +114,11 @@ def convert2Dos(source,output):
     with open(output, 'w') as file:
         file.writelines(dos_lines)
 
+    files = getFileExt(source)
+    section = consoleMessage(f"[BAS_FILES]:[{files}] ", ConsoleColor.BLUE)
+    message = consoleMessage("Convert unix to dos.", ConsoleColor.GREEN)
+    print(section + message)
+
 
 ##
 # Concatenate Bas files
@@ -98,15 +126,34 @@ def convert2Dos(source,output):
 # @param files: list files separate with ","
 # @param output: output filename
 ##
-def concatBasFiles(files, output):
-    ficheros = files.split(',')
+def concatBasFiles(files, output, folder):
+    if files != "":
+        ficheros = files.split(',')
+        folder = folder + "/"
+        if os.path.exists(folder + output):
+            os.remove(folder + output)
+        with open(folder + output, 'a') as salida:
+            for fichero in ficheros:
+                nombre_fichero = fichero.strip()
+                if os.path.exists(folder + nombre_fichero):
+                    with open(folder + nombre_fichero, 'r') as archivo:
+                        contenido = archivo.read()
+                        salida.write(contenido)
+                    os.remove(folder + nombre_fichero)
+                    section = consoleMessage(f"[BAS_FILES]:[{nombre_fichero}] ", ConsoleColor.BLUE)
+                    message = consoleMessage(f"Concatenate in {output}.", ConsoleColor.GREEN)
+                    print(section + message)
+                else:
+                    section = consoleMessage(f"[BAS_FILES]:[{nombre_fichero}] ", ConsoleColor.BLUE)
+                    message = consoleMessage("The file does not exist.", ConsoleColor.RED)
+                    print(section + message)
+                    endCompilation()
+                    sys.exit(1)
+    else:
+        section = consoleMessage(f"[BAS_FILES]:", ConsoleColor.BLUE)
+        message = consoleMessage("[warning] Not concat files.", ConsoleColor.YELLOW)
+        print(section + message)
 
-    with open(output, 'w') as salida:
-        for fichero in ficheros:
-            nombre_fichero = fichero.strip()
-            with open(nombre_fichero, 'r') as archivo:
-                contenido = archivo.read()
-                salida.write(contenido)
-            os.remove(nombre_fichero)
 
-
+def endCompilation():
+    print("end compilation")
