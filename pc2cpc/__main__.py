@@ -2,9 +2,14 @@ import click
 import os
 import sys
 import configparser
-
-from .common import consoleMessage, ConsoleColor, checkProjectValue, removeComments, convert2Dos, concatBasFiles
+from rich import print
+from .common import consoleMessage, ConsoleColor, checkProjectValue, removeComments, convert2Dos, concatBasFiles, \
+    messageError, messageWarning, messageInfo, endCompilation, beginCompilation
 from .project import readProjectIni
+from rich.console import Console
+from rich.text import Text
+
+console = Console()
 
 
 @click.command()
@@ -17,7 +22,7 @@ def main(file, mode):
 
     # check if the project.ini file necessary for the execution of the program exists
     if not os.path.isfile(PROJECT_FILE):
-        print(consoleMessage("\nERROR: The " + PROJECT_FILE + " file does not exist.", ConsoleColor.RED))
+        messageError("VALIDATE", PROJECT_FILE, "the " + PROJECT_FILE + " file does not exist.")
         sys.exit(1)
 
     ##
@@ -38,7 +43,7 @@ def main(file, mode):
     ##
     # Check the project values
     ##
-
+    beginCompilation(PROJECT_NAME)
     checkProjectValue("Project --> name", PROJECT_NAME)
     checkProjectValue("Project --> system", PROJECT_RVM_SYSTEM)
     checkProjectValue("Project --> model", PROJECT_RVM_MODEL)
@@ -58,8 +63,7 @@ def main(file, mode):
                 # BAS FILE PROCESSING
                 if section.upper() == "BAS_FILES":
                     if not os.path.isfile(f"src/{value}"):
-                        print(
-                            consoleMessage(f"\nERROR: The src/{value} file does not exist.", ConsoleColor.RED))
+                        messageError("VALIDATE", value, "the " + value + " file does not exist.")
                         sys.exit(1)
                     removeComments(f"src/{value}", f"disc/{value}")
                     convert2Dos(f"disc/{value}", f"disc/{value}")
@@ -68,9 +72,9 @@ def main(file, mode):
         concatBasFiles(PROJECT_CONCAT_SOURCE, PROJECT_CONCAT_OUT, PROJECT_DISC)
         convert2Dos(f"disc/{PROJECT_CONCAT_OUT}", f"disc/{PROJECT_CONCAT_OUT}")
     else:
-        section = consoleMessage(f"[BAS_FILES]:", ConsoleColor.BLUE)
-        message = consoleMessage("[warning] Not concat files.", ConsoleColor.YELLOW)
-        print(section + message)
+        messageWarning("BAS_FILES", "Warning", "Not concat files.")
+
+    endCompilation("OK")
 
 
 if __name__ == '__main__':

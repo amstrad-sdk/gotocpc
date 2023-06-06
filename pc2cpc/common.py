@@ -1,5 +1,9 @@
 import os
 import sys
+from rich.console import Console
+from rich.text import Text
+
+console = Console()
 
 
 class ConsoleColor:
@@ -11,9 +15,24 @@ class ConsoleColor:
     RESET = '\033[0m'
 
 
+def messageWarning(ambito, file, message):
+    console.print(
+        "[bold blue]\[" + str(ambito) + "]:[/bold blue][bold yellow]\[" + str(file) + "] " + message + "[/bold yellow]")
+
+
+def messageError(ambito, file, message):
+    console.print(
+        "[bold blue]\[" + str(ambito) + "]:\[" + str(file) + "][/bold blue][bold red] " + message + "[/bold red]")
+
+
+def messageInfo(ambito, file, message):
+    console.print(
+        "[bold blue]\[" + str(ambito) + "]:\[" + str(file) + "][/bold blue][bold green] " + message + "[/bold green]")
+
+
 def checkProjectValue(text, value):
     if value is None or value == "":
-        print(consoleMessage("\nERROR: The " + str(text) + " key does not exist or has no value.", ConsoleColor.RED))
+        messageError("VALIDATE", value, "The " + str(text) + " key does not exist or has no value.")
         sys.exit(1)
 
 
@@ -74,10 +93,8 @@ def getFileExtension(source):
 def removeComments(source, output):
     global file
     if not os.path.exists(source):
-        section = consoleMessage(f"[BAS_FILES]:[{getFileExt(source)}] ", ConsoleColor.BLUE)
-        message = consoleMessage("The file does not exist.", ConsoleColor.RED)
-        print(section + message)
-        endCompilation()
+        messageError("BAS_FILES", getFileExt(source), "The file does not exist.")
+        endCompilation("ERROR")
         sys.exit(1)
 
     with open(source, 'r') as file:
@@ -88,9 +105,7 @@ def removeComments(source, output):
     with open(output, 'w') as file:
         file.writelines(filtered_lines)
     file = getFileExt(source)
-    section = consoleMessage(f"[BAS_FILES]:[{file}] ", ConsoleColor.BLUE)
-    message = consoleMessage("File Comments Removed.", ConsoleColor.GREEN)
-    print(section + message)
+    messageInfo("BAS_FILES", file, "File Comments Removed.")
 
 
 ##
@@ -101,10 +116,8 @@ def removeComments(source, output):
 ##
 def convert2Dos(source, output):
     if not os.path.exists(source):
-        section = consoleMessage(f"[BAS_FILES]:[{getFileExt(source)}] ", ConsoleColor.BLUE)
-        message = consoleMessage("The file does not exist.", ConsoleColor.RED)
-        print(section + message)
-        endCompilation()
+        messageError("BAS_FILES", getFileExt(source), "The file does not exist.")
+        endCompilation("ERROR")
         sys.exit(1)
     with open(source, 'r') as file:
         unix_lines = file.readlines()
@@ -115,9 +128,7 @@ def convert2Dos(source, output):
         file.writelines(dos_lines)
 
     files = getFileExt(source)
-    section = consoleMessage(f"[BAS_FILES]:[{files}] ", ConsoleColor.BLUE)
-    message = consoleMessage("Convert unix to dos.", ConsoleColor.GREEN)
-    print(section + message)
+    messageInfo("BAS_FILES", files, "Convert unix to dos.")
 
 
 ##
@@ -140,20 +151,25 @@ def concatBasFiles(files, output, folder):
                         contenido = archivo.read()
                         salida.write(contenido)
                     os.remove(folder + nombre_fichero)
-                    section = consoleMessage(f"[BAS_FILES]:[{nombre_fichero}] ", ConsoleColor.BLUE)
-                    message = consoleMessage(f"Concatenate in {output}.", ConsoleColor.GREEN)
-                    print(section + message)
+                    messageInfo("BAS_FILES", nombre_fichero, f"Concatenate in {output}.")
                 else:
-                    section = consoleMessage(f"[BAS_FILES]:[{nombre_fichero}] ", ConsoleColor.BLUE)
-                    message = consoleMessage("The file does not exist.", ConsoleColor.RED)
-                    print(section + message)
-                    endCompilation()
+                    messageError("BAS_FILES", nombre_fichero, "The file does not exist.")
+                    endCompilation("ERROR")
                     sys.exit(1)
     else:
-        section = consoleMessage(f"[BAS_FILES]:", ConsoleColor.BLUE)
-        message = consoleMessage("[warning] Not concat files.", ConsoleColor.YELLOW)
-        print(section + message)
+        messageWarning("BAS_FILES", "Warning", "Not concat files.")
 
 
-def endCompilation():
-    print("end compilation")
+def endCompilation(type):
+    console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
+    if type == "OK":
+        console.print("[bold green] BUILD SUCCESSFULLY [/bold green]")
+    if type == "ERROR":
+        console.print("[bold red] BUILD FAILURE [/bold red]")
+    console.print("[bold white]-------------------------------------------------------------- [/bold white]")
+
+
+def beginCompilation(project):
+    console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
+    console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    console.print("[bold white]-------------------------------------------------------------- [/bold white]")

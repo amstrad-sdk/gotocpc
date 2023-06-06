@@ -14,7 +14,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'click',
-        'configparser'
+        'configparser',
+        'rich'
     ],
     python_requires='>=3.6',
     classifiers=[
