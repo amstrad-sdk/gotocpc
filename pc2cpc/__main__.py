@@ -4,13 +4,15 @@ import sys
 import configparser
 from rich import print
 from .common import consoleMessage, ConsoleColor, removeComments, convert2Dos, concatBasFiles, \
-    messageError, messageWarning, messageInfo, endCompilation, beginCompilation,concatFile, fileExist
+    messageError, messageWarning, messageInfo, endCompilation, beginCompilation,concatFile, fileExist,getFile
 from .project import readProjectIni
 from rich.console import Console
 from rich.text import Text
 from .idsk import createDskFile, addBasFileDsk, addBinaryFileDsk, addBinFileDsk
+from .martine import img2scr, img2spr
 import yaml
-
+import shutil
+from os import remove
 console = Console()
 
 
@@ -99,13 +101,17 @@ def main(file, mode):
             fileExist(f"{PATH_SRC}/{file_data['name']}")
             print("compile fichero")
             print("Add file bin a DSK")
+
         ##
         # Processing images files
         ## 
         elif file_data['kind'].upper() == 'IMAGE':
             fileExist(f"{PATH_ASSETS}/{file_data['name']}")
-            print("compile fichero")
-            print("Add file bin a DSK")
+            img2scr(f"{PATH_ASSETS}/{file_data['name']}",f"{file_data['mode']}","assets","")
+            NEW_FILE=getFile(f"{PATH_ASSETS}/{file_data['name']}").upper()
+            addBinaryFileDsk(PROJECT_DSK_FILE,f"{PATH_DISC}/{NEW_FILE}.SCR")
+            if not file_data['pal']:
+                remove(f"{PATH_DISC}/{NEW_FILE}.PAL")
         ##
         # Processing sprites files
         ## 

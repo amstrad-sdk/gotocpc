@@ -24,10 +24,10 @@ spec:
   #   name: main.c
   #   address: 0x4000
   #   include: /pepe/juan
-  # - kind: image
-  #   name: screen.png
-  #   mode: 0
-  #   pal: true
+  - kind: image
+    name: screen.png
+    mode: 0
+    pal: False
   # - kind: sprite
   #   name: screen.png
   #   width: 16

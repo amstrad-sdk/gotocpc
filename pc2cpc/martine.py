@@ -5,7 +5,7 @@ import click
 import shutil
 import os
 import sys
-from .common import consoleMessage, ConsoleColor, getFileExt
+from .common import consoleMessage, ConsoleColor, getFileExt, messageError, messageInfo,messageWarning
 
 ##
 # Concar Bas files
@@ -32,12 +32,12 @@ def img2scr(filename, mode, fileout, dsk):
             output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
             if not os.path.exists(fileout):
                 os.makedirs(fileout)
-            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.PAL'), fileout)
-            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.SCR'), fileout)
+            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.PAL'), "disc")
+            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.SCR'), "disc")
         else:
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
-        print(f'Error executing command: {e.output.decode()}')
+        messageError(getFileExt(filename), f'Error executing command: {e.output.decode()}')
         sys.exit(1)
         
     # Open JSON file
@@ -50,12 +50,8 @@ def img2scr(filename, mode, fileout, dsk):
     
     # Remove single quotes and brackets
     #sw_palette = sw_palette.replace("'", "").strip('[]')
+    messageInfo(getFileExt(filename), f"Convert image file to SCR.\n   [bold blue]SW Palette: [bold white]{sw_palette}\n   [bold blue]HW Palette: [bold white]{hw_palette}\n   [bold blue]Out File  : [bold white]{TMP_FILE.upper()}.SCR")
 
-    Message = consoleMessage("Image: ", ConsoleColor.WHITE) + consoleMessage(getFileExt(filename), ConsoleColor.YELLOW) + "\n" + \
-              consoleMessage("  SW Palette: ", ConsoleColor.WHITE) + consoleMessage(sw_palette, ConsoleColor.YELLOW) + "\n" + \
-              consoleMessage("  HW Palette: ", ConsoleColor.WHITE) + consoleMessage(hw_palette, ConsoleColor.YELLOW) + "\n" + \
-              consoleMessage("  Out File  : ", ConsoleColor.WHITE) + consoleMessage(TMP_FILE.upper() + ".SCR", ConsoleColor.YELLOW)
-    print(Message)
     if dsk:
         if not os.path.exists("dsk"):
             os.makedirs("dsk")
