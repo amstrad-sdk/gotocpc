@@ -6,13 +6,14 @@ from .common import consoleMessage, ConsoleColor, getFileExt,messageError, messa
 def createDskFile(imagefile):
     
     SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    cmd = [SDK4BASIC_PATH + '/bin/iDSK', '-n', imagefile]
+    IDSK = str(SDK4BASIC_PATH) + '/bin/iDSK'
+    cmd = [IDSK, '-n', imagefile]
     
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(imagefile, f"Create image DSK.")
+        messageInfo(getFileExt(imagefile), f"Create image DSK.")
     except subprocess.CalledProcessError as e:
-        messageError(imagefile, f'Error executing command: {e.output.decode()}')
+        messageError(getFileExt(imagefile), f'Error executing command: {e.output.decode()}')
         sys.exit(1)
 
 def addBasFileDsk(imagefile, file):
@@ -20,9 +21,9 @@ def addBasFileDsk(imagefile, file):
     cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, "-i", file, '-t', '0']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(file, f"Added file to dsk image.")
+        messageInfo(getFileExt(file), f"Added file to dsk image.")
     except subprocess.CalledProcessError as e:
-        messageError(imagefile, f'Error executing command: {e.output.decode()}')
+        messageError(getFileExt(imagefile), f'Error executing command: {e.output.decode()}')
         sys.exit(1)
 
 def addBinaryFileDsk(imagefile, file):
@@ -30,7 +31,7 @@ def addBinaryFileDsk(imagefile, file):
     cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, "-i", file, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(file, f"Added file to dsk image.")
+        messageInfo(getFileExt(file), f"Added file to dsk image.")
     except subprocess.CalledProcessError as e:
         messageError(imagefile, f'Error executing command: {e.output.decode()}')
         sys.exit(1)
@@ -40,7 +41,7 @@ def addBinFileDsk(imagefile, file,laddress,eaddress):
     cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, '-i', file, '-e',eaddress,'-c', laddress,'-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(file, f"Added file to dsk image:\n     address: {laddress}\n     execution:  {eaddress}\n")
+        messageInfo(getFileExt(file), f"Added file to dsk image:\n     address: {laddress}\n     execution:  {eaddress}\n")
     except subprocess.CalledProcessError as e:
         messageError(imagefile, f'Error executing command: {e.output.decode()}')
         sys.exit(1)

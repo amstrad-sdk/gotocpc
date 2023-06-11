@@ -24,6 +24,7 @@
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",
+                "SDK4BASIC_PATH": "${workspaceFolder}/software",
             }
         }
     ]

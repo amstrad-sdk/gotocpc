@@ -8,6 +8,7 @@ from .common import consoleMessage, ConsoleColor, removeComments, convert2Dos, c
 from .project import readProjectIni
 from rich.console import Console
 from rich.text import Text
+from .idsk import createDskFile, addBasFileDsk, addBinaryFileDsk, addBinFileDsk
 import yaml
 
 console = Console()
@@ -46,6 +47,7 @@ def main(file, mode):
     PROJECT_RVM_MODEL = data['project']['rvm'].get('model', '6128')
     PROJECT_RVM_RUN = data['project']['rvm'].get('name', 'run"main.bas"')
     PROJECT_CONCAT_OUT = PATH_DISC + "/" + data['project']['concatenate'].get('out', 'PROJECT.BAS')
+    PROJECT_DSK_FILE = f"{PATH_DSK}/{PROJECT_NAME}.DSK"
 
     ##
     # Check the disc folder
@@ -63,7 +65,7 @@ def main(file, mode):
     ##
     # Create image DSK
     ##  
-    print("Create imagen DSK con nombre de proyecto")
+    createDskFile(PROJECT_DSK_FILE)
 
     ##
     # Processing of project files
@@ -81,15 +83,15 @@ def main(file, mode):
                 concatFile(f"{PATH_DISC}/{file_data['name']}", PROJECT_CONCAT_OUT)
                 if COUNT == NUMBER_CONCAT_FILES:
                     convert2Dos(PROJECT_CONCAT_OUT,PROJECT_CONCAT_OUT)
-                    print("ADD to DSK")
+                    addBasFileDsk(PROJECT_DSK_FILE,f"{PATH_SRC}/{file_data['name']}")
             else:
-                print("ADD to DSK")
+                addBasFileDsk(PROJECT_DSK_FILE,f"{PATH_SRC}/{file_data['name']}")
         ##
         # Processing ascii files
         ## 
         elif file_data['kind'].upper() == 'ASCII':
             fileExist(f"{PATH_SRC}/{file_data['name']}")
-            print("Add file ascii a DSK")
+            addBasFileDsk(PROJECT_DSK_FILE,f"{PATH_SRC}/{file_data['name']}")
         ##
         # Processing C files
         ## 
