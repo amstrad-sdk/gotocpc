@@ -3,11 +3,12 @@ import os
 import sys
 import configparser
 from rich import print
-from .common import consoleMessage, ConsoleColor, checkProjectValue, removeComments, convert2Dos, concatBasFiles, \
-    messageError, messageWarning, messageInfo, endCompilation, beginCompilation
+from .common import consoleMessage, ConsoleColor, removeComments, convert2Dos, concatBasFiles, \
+    messageError, messageWarning, messageInfo, endCompilation, beginCompilation,concatFile, fileExist
 from .project import readProjectIni
 from rich.console import Console
 from rich.text import Text
+import yaml
 
 console = Console()
 
@@ -16,64 +17,104 @@ console = Console()
 @click.option('-f', '--file', required=False, help='Input file name')
 @click.option('-m', '--mode', type=click.Choice(['0', '1', '2']), default='0', help='Image Mode')
 def main(file, mode):
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    PWD = os.getcwd() + "/"
-    PROJECT_FILE = "project.ini"
+    
+
+    # PWD = os.getcwd() + "/"
+    PROJECT_FILE = "project.yaml"
 
     # check if the project.ini file necessary for the execution of the program exists
-    if not os.path.isfile(PROJECT_FILE):
-        messageError("VALIDATE", PROJECT_FILE, "the " + PROJECT_FILE + " file does not exist.")
-        sys.exit(1)
+    fileExist(PROJECT_FILE)
 
     ##
     # Define Variables
     ##
-    config = configparser.ConfigParser()
-    PROJECT_DATA = readProjectIni(PROJECT_FILE)
+    
+    with open(PROJECT_FILE, 'r') as file:
+        data = yaml.safe_load(file)
+    
+    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
+    NUMBER_CONCAT_FILES = sum(1 for item in data['spec']['files'] if item.get('kind') == 'bas' and item.get('concat') == True)
+    COUNT = 0
+    PATH_DISC = "disc"
+    PATH_SRC = "src"
+    PATH_DSK = "dsk"
+    PATH_ASSETS = "assets"
     PROJECT_NOT_SECTIONS = ["PROJECT", "CONCATENATE", "RVM"]
-    PROJECT_NAME = PROJECT_DATA.get('PROJECT', {}).get('name')
-    PROJECT_CONCAT_SOURCE = PROJECT_DATA.get('CONCATENATE', {}).get('source')
-    PROJECT_CONCAT_OUT = PROJECT_DATA.get('CONCATENATE', {}).get('out')
-    PROJECT_RVM_SYSTEM = PROJECT_DATA.get('RVM', {}).get('system')
-    PROJECT_RVM_MODEL = PROJECT_DATA.get('RVM', {}).get('model')
-    PROJECT_RVM_RUN = PROJECT_DATA.get('RVM', {}).get('run')
-    PROJECT_BAS_FILE_1 = PROJECT_DATA.get('BAS_FILES', {}).get('file_1')
-    PROJECT_DISC = "disc"
-
-    ##
-    # Check the project values
-    ##
-    beginCompilation(PROJECT_NAME)
-    checkProjectValue("Project --> name", PROJECT_NAME)
-    checkProjectValue("Project --> system", PROJECT_RVM_SYSTEM)
-    checkProjectValue("Project --> model", PROJECT_RVM_MODEL)
-    checkProjectValue("Bas Files --> file_!", PROJECT_BAS_FILE_1)
+    PROJECT_NAME = data['project']['data'].get('name', 'No project mame')
+    PROJECT_AUTHOR = data['project']['data'].get('author', 'No author mame')
+    PROJECT_RVM_SYSTEM = data['project']['rvm'].get('system', 'web')
+    PROJECT_RVM_MODEL = data['project']['rvm'].get('model', '6128')
+    PROJECT_RVM_RUN = data['project']['rvm'].get('name', 'run"main.bas"')
+    PROJECT_CONCAT_OUT = PATH_DISC + "/" + data['project']['concatenate'].get('out', 'PROJECT.BAS')
 
     ##
     # Check the disc folder
     ##
-    if not os.path.exists(PROJECT_DISC):
-        os.makedirs(PROJECT_DISC)
+    if not os.path.exists(PATH_DISC):
+        os.makedirs(PATH_DISC)
+    if not os.path.exists(PATH_DSK):
+        os.makedirs(PATH_DSK)
+        
+    ##
+    # Show begin compilation
+    ##  
+    beginCompilation(PROJECT_NAME)
+    
+    ##
+    # Create image DSK
+    ##  
+    print("Create imagen DSK con nombre de proyecto")
 
-    config.read(PROJECT_FILE)
+    ##
+    # Processing of project files
+    ##  
+    for file_data in data['spec']['files']:
+        ##
+        # Processing bas files
+        ## 
+        if file_data['kind'].upper() == 'BAS':
+            COUNT = COUNT + 1
+            fileExist(f"{PATH_SRC}/{file_data['name']}")
+            removeComments(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}")
+            convert2Dos(f"{PATH_DISC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}")
+            if file_data['concat'] == True:
+                concatFile(f"{PATH_DISC}/{file_data['name']}", PROJECT_CONCAT_OUT)
+                if COUNT == NUMBER_CONCAT_FILES:
+                    convert2Dos(PROJECT_CONCAT_OUT,PROJECT_CONCAT_OUT)
+                    print("ADD to DSK")
+            else:
+                print("ADD to DSK")
+        ##
+        # Processing ascii files
+        ## 
+        elif file_data['kind'].upper() == 'ASCII':
+            fileExist(f"{PATH_SRC}/{file_data['name']}")
+            print("Add file ascii a DSK")
+        ##
+        # Processing C files
+        ## 
+        elif file_data['kind'].upper() == 'C':
+            fileExist(f"{PATH_SRC}/{file_data['name']}")
+            print("compile fichero")
+            print("Add file bin a DSK")
+        ##
+        # Processing images files
+        ## 
+        elif file_data['kind'].upper() == 'IMAGE':
+            fileExist(f"{PATH_ASSETS}/{file_data['name']}")
+            print("compile fichero")
+            print("Add file bin a DSK")
+        ##
+        # Processing sprites files
+        ## 
+        elif file_data['kind'].upper() == 'SPRITE':
+            fileExist(f"{PATH_ASSETS}/{file_data['name']}")
+            print("compile fichero")
+            print("Add file bin a DSK")
 
-    for section in config.sections():
-        if section not in PROJECT_NOT_SECTIONS:
-            for key, value in config.items(section):
-                # BAS FILE PROCESSING
-                if section.upper() == "BAS_FILES":
-                    if not os.path.isfile(f"src/{value}"):
-                        messageError("VALIDATE", value, "the " + value + " file does not exist.")
-                        sys.exit(1)
-                    removeComments(f"src/{value}", f"disc/{value}")
-                    convert2Dos(f"disc/{value}", f"disc/{value}")
-
-    if PROJECT_CONCAT_SOURCE != "" and PROJECT_CONCAT_SOURCE is not None:
-        concatBasFiles(PROJECT_CONCAT_SOURCE, PROJECT_CONCAT_OUT, PROJECT_DISC)
-        convert2Dos(f"disc/{PROJECT_CONCAT_OUT}", f"disc/{PROJECT_CONCAT_OUT}")
-    else:
-        messageWarning("BAS_FILES", "Warning", "Not concat files.")
-
+    ##
+    # Show end compilation
+    ##  
     endCompilation("OK")
 
 

@@ -1,0 +1,36 @@
+Version: v1
+kind: pc2cpc
+project:
+  data:
+    name: mi project molon
+    author: destroyer
+  rvm:
+    system: web
+    model: 6128
+    run: run"MAIN.BAS"
+  concatenate:
+    out: MAIN23.BAS
+spec:
+  files:
+  - kind: bas
+    name: main.bas
+    concat: False
+  - kind: bas
+    name: main2.bas
+    concat: False
+  - kind: ascii
+    name: file.txt
+  # - kind: c
+  #   name: main.c
+  #   address: 0x4000
+  #   include: /pepe/juan
+  # - kind: image
+  #   name: screen.png
+  #   mode: 0
+  #   pal: true
+  # - kind: sprite
+  #   name: screen.png
+  #   width: 16
+  #   height: 16
+  #   mode: 0
+

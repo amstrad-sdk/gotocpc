@@ -15,7 +15,8 @@ setup(
     install_requires=[
         'click',
         'configparser',
-        'rich'
+        'rich',
+        'PyYAML'
     ],
     python_requires='>=3.6',
     classifiers=[

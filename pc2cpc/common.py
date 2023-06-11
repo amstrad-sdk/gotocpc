@@ -14,26 +14,41 @@ class ConsoleColor:
     WHITE = '\033[97m'
     RESET = '\033[0m'
 
-
-def messageWarning(ambito, file, message):
+##
+# Print message warning
+#
+# @param file: File to which the message refers
+# @param message: message to display
+##
+def messageWarning(file, message):
     console.print(
-        "[bold blue]\[" + str(ambito) + "]:[/bold blue][bold yellow]\[" + str(file) + "] " + message + "[/bold yellow]")
+        "[bold yellow]\[" + str(file) + "] " + message + "[/bold yellow]")
 
-
-def messageError(ambito, file, message):
+##
+# Print message eror
+#
+# @param file: File to which the message refers
+# @param message: message to display
+##
+def messageError(file, message):
     console.print(
-        "[bold blue]\[" + str(ambito) + "]:\[" + str(file) + "][/bold blue][bold red] " + message + "[/bold red]")
+        "[bold blue]\[" + str(file) + "][/bold blue][bold red] " + message + "[/bold red]")
 
-
-def messageInfo(ambito, file, message):
+##
+# Print message info
+#
+# @param file: File to which the message refers
+# @param message: message to display
+##
+def messageInfo(file, message):
     console.print(
-        "[bold blue]\[" + str(ambito) + "]:\[" + str(file) + "][/bold blue][bold green] " + message + "[/bold green]")
+        "[bold blue]\[" + str(file) + "][/bold blue][bold green] " + message + "[/bold green]")
 
 
-def checkProjectValue(text, value):
-    if value is None or value == "":
-        messageError("VALIDATE", value, "The " + str(text) + " key does not exist or has no value.")
-        sys.exit(1)
+# def checkProjectValue(text, value):
+#     if value is None or value == "":
+#         messageError(value, "The " + str(text) + " key does not exist or has no value.")
+#         sys.exit(1)
 
 
 ##
@@ -45,13 +60,6 @@ def checkProjectValue(text, value):
 def consoleMessage(text, color):
     colored_text = f"{color}{text}{ConsoleColor.RESET}"
     return colored_text
-
-
-# Ejemplo de uso
-# print_colored("Texto en verde", ConsoleColor.GREEN)
-# print_colored("Texto en amarillo", ConsoleColor.YELLOW)
-# print_colored("Texto en rojo", ConsoleColor.RED)
-# print("Texto normal")
 
 ##
 # Get Get file without extension
@@ -93,7 +101,7 @@ def getFileExtension(source):
 def removeComments(source, output):
     global file
     if not os.path.exists(source):
-        messageError("BAS_FILES", getFileExt(source), "The file does not exist.")
+        messageError(getFileExt(source), "The file does not exist.")
         endCompilation("ERROR")
         sys.exit(1)
 
@@ -105,7 +113,7 @@ def removeComments(source, output):
     with open(output, 'w') as file:
         file.writelines(filtered_lines)
     file = getFileExt(source)
-    messageInfo("BAS_FILES", file, "File Comments Removed.")
+    messageInfo(file, "File Comments Removed.")
 
 
 ##
@@ -116,7 +124,7 @@ def removeComments(source, output):
 ##
 def convert2Dos(source, output):
     if not os.path.exists(source):
-        messageError("BAS_FILES", getFileExt(source), "The file does not exist.")
+        messageError(getFileExt(source), "The file does not exist.")
         endCompilation("ERROR")
         sys.exit(1)
     with open(source, 'r') as file:
@@ -128,8 +136,31 @@ def convert2Dos(source, output):
         file.writelines(dos_lines)
 
     files = getFileExt(source)
-    messageInfo("BAS_FILES", files, "Convert unix to dos.")
+    messageInfo(files, "Convert unix to dos.")
 
+##
+# Concatenate Bas file
+#
+# @param source: source file name
+# @param output: output file name
+##
+def concatFile(source, output):
+    with open(source, 'r') as origen_file:
+        contenido_origen = origen_file.read()
+    with open(output, 'a') as destino_file:
+        destino_file.write(contenido_origen)
+    os.remove(source)
+    messageInfo(getFileExt(source), f"Concatenate in {getFileExt(output)}.")
+
+##
+# verify file exist
+#
+# @param source: source file name
+##
+def fileExist(source):
+    if not os.path.isfile(source):
+        messageError(getFileExt(source), " File does not exist.")
+        sys.exit(1)
 
 ##
 # Concatenate Bas files
@@ -151,15 +182,19 @@ def concatBasFiles(files, output, folder):
                         contenido = archivo.read()
                         salida.write(contenido)
                     os.remove(folder + nombre_fichero)
-                    messageInfo("BAS_FILES", nombre_fichero, f"Concatenate in {output}.")
+                    messageInfo(nombre_fichero, f"Concatenate in {output}.")
                 else:
-                    messageError("BAS_FILES", nombre_fichero, "The file does not exist.")
+                    messageError(nombre_fichero, "The file does not exist.")
                     endCompilation("ERROR")
                     sys.exit(1)
     else:
-        messageWarning("BAS_FILES", "Warning", "Not concat files.")
+        messageWarning("Warning", "Not concat files.")
 
-
+##
+# end compilation
+#
+# @param type: show final compilation values OK or ERROR
+##
 def endCompilation(type):
     console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
     if type == "OK":
@@ -168,8 +203,12 @@ def endCompilation(type):
         console.print("[bold red] BUILD FAILURE [/bold red]")
     console.print("[bold white]-------------------------------------------------------------- [/bold white]")
 
-
+##
+# begin compilation
+#
+# @param project: show project name in initial compilation
+##
 def beginCompilation(project):
     console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
     console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
-    console.print("[bold white]-------------------------------------------------------------- [/bold white]")
+    console.print("[bold white]-------------------------------------------------------------- [/bold white]\n")
