@@ -20,10 +20,10 @@ spec:
     concat: False
   - kind: ascii
     name: file.txt
-  # - kind: c
-  #   name: main.c
-  #   address: 0x4000
-  #   include: /pepe/juan
+  - kind: c
+    name: main.c
+    address: 0x4000
+    include: 
   - kind: image
     name: screen.png
     mode: 0
