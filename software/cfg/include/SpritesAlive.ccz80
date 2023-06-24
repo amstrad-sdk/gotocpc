@@ -1,0 +1,865 @@
+// Library SpritesAlive for ccz80 2.0.7
+
+include "standard.ccz80";
+
+asm
+{
+  "__rsx_animate:    equ #7807",
+  "__rsx_animoff:    equ #782F",
+  "__rsx_bullet:     equ #789E",
+  "__rsx_clearep:    equ #7547",
+  "__rsx_cls:        equ #7AB7",
+  "__rsx_collide:    equ #749E",
+  "__rsx_colltest:   equ #74BD",
+  "__rsx_colour:     equ #963D",
+  "__rsx_csprite:    equ #781B",
+  "__rsx_dget:       equ #737E",
+  "__rsx_draw:       equ #77DC",
+  "__rsx_erase:      equ #7043",
+  "__rsx_explode:    equ #7967",
+  "__rsx_frame:      equ #7989",
+  "__rsx_hit:        equ #7554",
+  "__rsx_ink:        equ #7928",
+  "__rsx_inkblack:   equ #791E",
+  "__rsx_keb:        equ #75B0",
+  "__rsx_kebdef:     equ #75DB",
+  "__rsx_kebspeed:   equ #75C1",
+  "__rsx_mazeoff:    equ #7B80",
+  "__rsx_mazeon:     equ #7B6B",
+  "__rsx_merge:      equ #7951",
+  "__rsx_missdelay:  equ #7890",
+  "__rsx_missdist:   equ #78F9",
+  "__rsx_misshit:    equ #7AD2",
+  "__rsx_missile:    equ #7882",
+  "__rsx_misstype:   equ #7AC5",
+  "__rsx_move:       equ #740B",
+  "__rsx_moveall:    equ #7426",
+  "__rsx_movehit:    equ #7785",
+  "__rsx_nextrep:    equ #752B",
+  "__rsx_node:       equ #7B51",
+  "__rsx_nodealter:  equ #7CAE",
+  "__rsx_nodeattr:   equ #7C45",
+  "__rsx_nodeoff:    equ #7C04",
+  "__rsx_nodeon:     equ #7B9B",
+  "__rsx_nodespeed:  equ #7B85",
+  "__rsx_nodesprite: equ #7C9E",
+  "__rsx_readkeb:    equ #79E6",
+  "__rsx_readstix:   equ #79BA",
+  "__rsx_repoff:     equ #7B22",
+  "__rsx_repon:      equ #7B0E",
+  "__rsx_report:     equ #74E3",
+  "__rsx_reset:      equ #7085",
+  "__rsx_sattr:      equ #7C88",
+  "__rsx_scenery:    equ #7843",
+  "__rsx_screen:     equ #73BE",
+  "__rsx_sdir:       equ #744F",
+  "__rsx_sdraw:      equ #769C",
+  "__rsx_sequence:   equ #77F6",
+  "__rsx_sget:       equ #7438",
+  "__rsx_shoot:      equ #78AF",
+  "__rsx_smem:       equ #76E2",
+  "__rsx_smode:      equ #7466",
+  "__rsx_sound:      equ #7C58",
+  "__rsx_speek:      equ #7A78",
+  "__rsx_spoke:      equ #7B35",
+  "__rsx_sput:       equ #73D7",
+  "__rsx_sputall:    equ #90A5",
+  "__rsx_stix:       equ #757A",
+  "__rsx_stixspeed:  equ #7596",
+  "__rsx_stuck:      equ #7A12",
+  "__rsx_swindow:    equ #75F8",
+  "__rsx_sxpos:      equ #761E",
+  "__rsx_sypos:      equ #765E",
+  "__rsx_wait:       equ #7998",
+  "__rsx_wp:         equ #7397",
+  "__rsx_xdir:       equ #76FB",
+  "__rsx_xedge:      equ #7476",
+  "__rsx_ydir:       equ #7740",
+  "__rsx_yedge:      equ #748A" 
+}
+
+function byte sp_load()
+{
+  "ld b,8",
+  "ld hl,__sp_load_1",
+  "ld de,#6800",
+  "call __cas_in_open",
+  "ld hl,#7000",
+  "call __cas_in_direct",
+  "call __cas_in_close",
+  "xor a",
+  "ld (#94B8),a",
+  "jp #7009",
+  "__sp_load_1:",
+  "defm \"sprite.1\""
+}
+
+function byte sp_animate(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_animate"
+}
+
+function byte sp_animoff(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_animoff"
+}
+
+function byte sp_bullet(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_bullet"
+}
+
+function byte sp_clearep(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_clearep"
+}
+
+function inline byte sp_cls()
+{
+  "xor a",
+  "call __rsx_cls"
+}
+
+function byte sp_collide(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_collide"
+}
+
+function word sp_colltest(word)
+{
+  "ld hl,__sp_colltest_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_colltest",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_colltest_1)",
+  "ret",
+  "__sp_colltest_1:",
+  "defw 0"
+}
+
+function inline byte sp_colour()
+{
+  "xor a",
+  "call __rsx_colour"
+}
+
+function byte sp_csprite(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_csprite"
+}
+
+function byte sp_dget(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_dget"
+}
+
+function register byte sp_draw(word)
+{
+  "ld (__sp_draw_2+1),hl ; Store filename address",
+  "call _strlen",
+  "ld a,l",
+  "ld (__sp_draw_2),a ; Store filename length",
+  "ld ix,__sp_draw_3 ; IX = argument address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_draw",
+  "__sp_draw_2:",
+  "defs 3",
+  "__sp_draw_3:",
+  "defw __sp_draw_2"
+} using strlen;
+
+function inline byte sp_erase()
+{
+  "xor a",
+  "call __rsx_erase"
+}
+
+function byte sp_explode(word, word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,5 ; A = number of arguments",
+  "jp __rsx_explode"
+}
+
+function inline byte sp_frame()
+{
+  "xor a",
+  "call __rsx_frame"
+}
+
+function word sp_hit(word)
+{
+  "ld hl,__sp_hit_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_hit",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_hit_1)",
+  "ret",
+  "__sp_hit_1:",
+  "defw 0"
+}
+
+function byte sp_ink(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_ink"
+}
+
+function inline byte sp_inkblack()
+{
+  "xor a",
+  "call __rsx_inkblack"
+}
+
+function byte sp_keb(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_keb"
+}
+
+function byte sp_kebdef(word, word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,5 ; A = number of arguments",
+  "jp __rsx_kebdef"
+}
+
+function byte sp_kebspeed(word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,4 ; A = number of arguments",
+  "jp __rsx_kebspeed"
+}
+
+function inline byte sp_mazeoff()
+{
+  "xor a",
+  "call __rsx_mazeoff"
+}
+
+function inline byte sp_mazeon()
+{
+  "xor a",
+  "call __rsx_mazeon"
+}
+
+function byte sp_merge(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_merge"
+}
+
+function byte sp_missdelay(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_missdelay"
+}
+
+function byte sp_missdist(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_missdist"
+}
+
+function word sp_misshit()
+{
+  "ld hl,__sp_misshit_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "call __rsx_misshit",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_misshit_1)",
+  "ret",
+  "__sp_misshit_1:",
+  "defw 0"
+}
+
+function word sp_misshittype(word)
+{
+  "ld hl,__sp_misshittype_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_misshit",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_misshittype_1)",
+  "ret",
+  "__sp_misshittype_1:",
+  "defw 0"
+}
+
+function byte sp_missile(word, word, word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,6 ; A = number of arguments",
+  "jp __rsx_missile"
+}
+
+function byte sp_misstype(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_misstype"
+}
+
+function byte sp_move(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_move"
+}
+
+function byte sp_moverange(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_move"
+}
+
+function inline byte sp_moveall()
+{
+  "xor a",
+  "call __rsx_moveall"
+}
+
+function word sp_movehit(word)
+{
+  "ld hl,__sp_movehit_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_movehit",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_movehit_1)",
+  "ret",
+  "__sp_movehit_1:",
+  "defw 0"
+}
+
+function word sp_nextrep()
+{
+  "ld hl,__sp_nextrep_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "call __rsx_nextrep",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_nextrep_1)",
+  "ret",
+  "__sp_nextrep_1:",
+  "defw 0"
+}
+
+function register byte sp_node(word)
+{
+  "ld (__sp_node_2+1),hl ; Store filename address",
+  "call _strlen",
+  "ld a,l",
+  "ld (__sp_node_2),a ; Store filename length",
+  "ld ix,__sp_node_3 ; IX = argument address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_node",
+  "__sp_node_2:",
+  "defs 3",
+  "__sp_node_3:",
+  "defw __sp_node_2"
+} using strlen;
+
+function byte sp_nodealter(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_nodealter"
+}
+
+function byte sp_nodeattr(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_nodeattr"
+}
+
+function byte sp_nodeoff(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_nodeoff"
+}
+
+function byte sp_nodeon(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_nodeon"
+}
+
+function byte sp_nodespeed(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_nodespeed"
+}
+
+function byte sp_nodesprite(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_nodesprite"
+}
+
+function word sp_readkeb(word)
+{
+  "ld hl,__sp_readkeb_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_readkeb",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_readkeb_1)",
+  "ret",
+  "__sp_readkeb_1:",
+  "defw 0"
+}
+
+function word sp_readstix(word)
+{
+  "ld hl,__sp_readstix_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_readstix",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_readstix_1)",
+  "ret",
+  "__sp_readstix_1:",
+  "defw 0"
+}
+
+function byte sp_repoff(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_repoff"
+}
+
+function byte sp_repon(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_repon"
+}
+
+function word sp_report()
+{
+  "ld hl,__sp_report_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "call __rsx_report",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_report_1)",
+  "ret",
+  "__sp_report_1:",
+  "defw 0"
+}
+
+function word sp_reportrange(word, word)
+{
+  "ld hl,__sp_reportrange_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "call __rsx_report",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_reportrange_1)",
+  "ret",
+  "__sp_reportrange_1:",
+  "defw 0"
+}
+
+function inline byte sp_reset()
+{
+  "xor a",
+  "call __rsx_reset"
+}
+
+function byte sp_sattr(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_sattr"
+}
+
+function byte sp_scenery(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_scenery"
+}
+
+function byte sp_screen(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_screen"
+}
+
+function byte sp_sdir(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_sdir"
+}
+
+function word sp_sdraw(word)
+{
+  "ld hl,__sp_sdraw_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_sdraw",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_sdraw_1)",
+  "ret",
+  "__sp_sdraw_1:",
+  "defw 0"
+}
+
+function byte sp_sequence(word, word, word, word, word, word, word, word, word, word, word, word, word, word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,17 ; A = number of arguments",
+  "jp __rsx_sequence"
+}
+
+function byte sp_sget(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_sget"
+}
+
+function byte sp_shoot(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_shoot"
+}
+
+function word sp_smem()
+{
+  "ld hl,__sp_smem_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "call __rsx_smem",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_smem_1)",
+  "ret",
+  "__sp_smem_1:",
+  "defw 0"
+}
+
+function byte sp_smode(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_smode"
+}
+
+function byte sp_sound(word, word, word, word, word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,8 ; A = number of arguments",
+  "jp __rsx_sound"
+}
+
+function word sp_speek(word, word)
+{
+  "ld hl,__sp_speek_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "call __rsx_speek",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_speek_1)",
+  "ret",
+  "__sp_speek_1:",
+  "defw 0"
+}
+
+function byte sp_spoke(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_spoke"
+}
+
+function byte sp_sput(word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,3 ; A = number of arguments",
+  "jp __rsx_sput"
+}
+
+function byte sp_sputunique(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_sput"
+}
+
+function byte sp_sputrange(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_sput"
+}
+
+function inline byte sp_sputall()
+{
+  "xor a",
+  "call __rsx_sputall"
+}
+
+function byte sp_stix(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_stix"
+}
+
+function byte sp_stixspeed(word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,4 ; A = number of arguments",
+  "jp __rsx_stixspeed"
+}
+
+function word sp_stuck(word)
+{
+  "ld hl,__sp_stuck_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_stuck",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_stuck_1)",
+  "ret",
+  "__sp_stuck_1:",
+  "defw 0"
+}
+
+function byte sp_swindow(word, word, word, word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,5 ; A = number of arguments",
+  "jp __rsx_swindow"
+}
+
+function word sp_sxpos(word)
+{
+  "ld hl,__sp_sxpos_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_sxpos",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_sxpos_1)",
+  "ret",
+  "__sp_sxpos_1:",
+  "defw 0"
+}
+
+function word sp_sypos(word)
+{
+  "ld hl,__sp_sypos_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_sypos",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_sypos_1)",
+  "ret",
+  "__sp_sypos_1:",
+  "defw 0"
+}
+
+function byte sp_wait(word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,1 ; A = number of arguments",
+  "jp __rsx_wait"
+}
+
+function inline byte sp_wp()
+{
+  "xor a",
+  "call __rsx_wp"
+}
+
+function word sp_xdir(word)
+{
+  "ld hl,__sp_xdir_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_xdir",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_xdir_1)",
+  "ret",
+  "__sp_xdir_1:",
+  "defw 0"
+}
+
+function byte sp_xedge(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_xedge"
+}
+
+function word sp_ydir(word)
+{
+  "ld hl,__sp_ydir_1",
+  "ex (sp),hl",
+  "push hl ; Insert into stack result address before returning address",
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "call __rsx_ydir",
+  "pop hl",
+  "ex (sp),hl ; Remove result address from stack",
+  "ld hl,(__sp_ydir_1)",
+  "ret",
+  "__sp_ydir_1:",
+  "defw 0"
+}
+
+function byte sp_yedge(word, word)
+{
+  "ld ix,2",
+  "add ix,sp ; IX = arguments address",
+  "ld a,2 ; A = number of arguments",
+  "jp __rsx_yedge"
+}

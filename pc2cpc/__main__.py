@@ -4,15 +4,18 @@ import sys
 import configparser
 from rich import print
 from .common import consoleMessage, ConsoleColor, removeComments, convert2Dos, concatBasFiles, \
-    messageError, messageWarning, messageInfo, endCompilation, beginCompilation,concatFile, fileExist,getFile
+    messageError, messageWarning, messageInfo, endCompilation, beginCompilation, concatFile, fileExist, getFile, \
+    convert2Dos2
 from .project import readProjectIni
 from rich.console import Console
 from rich.text import Text
 from .idsk import createDskFile, addBasFileDsk, addBinaryFileDsk, addBinFileDsk
 from .martine import img2scr, img2spr
+from .ccz80 import compile
 import yaml
 import shutil
 from os import remove
+
 console = Console()
 
 
@@ -20,8 +23,6 @@ console = Console()
 @click.option('-f', '--file', required=False, help='Input file name')
 @click.option('-m', '--mode', type=click.Choice(['0', '1', '2']), default='0', help='Image Mode')
 def main(file, mode):
-    
-
     # PWD = os.getcwd() + "/"
     PROJECT_FILE = "project.yaml"
 
@@ -31,12 +32,13 @@ def main(file, mode):
     ##
     # Define Variables
     ##
-    
+
     with open(PROJECT_FILE, 'r') as file:
         data = yaml.safe_load(file)
-    
+
     SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    NUMBER_CONCAT_FILES = sum(1 for item in data['spec']['files'] if item.get('kind') == 'bas' and item.get('concat') == True)
+    NUMBER_CONCAT_FILES = sum(
+        1 for item in data['spec']['files'] if item.get('kind') == 'bas' and item.get('concat') == True)
     COUNT = 0
     PATH_DISC = "disc"
     PATH_SRC = "src"
@@ -58,12 +60,12 @@ def main(file, mode):
         os.makedirs(PATH_DISC)
     if not os.path.exists(PATH_DSK):
         os.makedirs(PATH_DSK)
-        
+
     ##
     # Show begin compilation
     ##  
     beginCompilation(PROJECT_NAME)
-    
+
     ##
     # Create image DSK
     ##  
@@ -81,35 +83,40 @@ def main(file, mode):
             fileExist(f"{PATH_SRC}/{file_data['name']}")
             removeComments(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}")
             convert2Dos(f"{PATH_DISC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}")
+            #convert2Dos2(f"{PATH_DISC}/{file_data['name']}")
             if file_data['concat'] == True:
                 concatFile(f"{PATH_DISC}/{file_data['name']}", PROJECT_CONCAT_OUT)
                 if COUNT == NUMBER_CONCAT_FILES:
-                    convert2Dos(PROJECT_CONCAT_OUT,PROJECT_CONCAT_OUT)
-                    addBasFileDsk(PROJECT_DSK_FILE,f"{PATH_SRC}/{file_data['name']}")
+                    convert2Dos(PROJECT_CONCAT_OUT, PROJECT_CONCAT_OUT)
+                    addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_DISC}/{file_data['name']}")
             else:
-                addBasFileDsk(PROJECT_DSK_FILE,f"{PATH_SRC}/{file_data['name']}")
+                addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_DISC}/{file_data['name']}")
         ##
         # Processing ascii files
         ## 
         elif file_data['kind'].upper() == 'ASCII':
             fileExist(f"{PATH_SRC}/{file_data['name']}")
-            addBasFileDsk(PROJECT_DSK_FILE,f"{PATH_SRC}/{file_data['name']}")
+            addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_SRC}/{file_data['name']}")
         ##
         # Processing C files
         ## 
         elif file_data['kind'].upper() == 'C':
             fileExist(f"{PATH_SRC}/{file_data['name']}")
-            print("compile fichero")
-            print("Add file bin a DSK")
+            compile(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/", f"{file_data['address']}",
+                    f"{file_data['include']}")
+            
+            addBinaryFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/" + getFile(f"{PATH_DISC}/{file_data['name']}") + ".bin")
+            #addBinFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/" + getFile(f"{PATH_DISC}/{file_data['name']}") + ".bin",
+            #              f"{file_data['address']}")
 
         ##
         # Processing images files
         ## 
         elif file_data['kind'].upper() == 'IMAGE':
             fileExist(f"{PATH_ASSETS}/{file_data['name']}")
-            img2scr(f"{PATH_ASSETS}/{file_data['name']}",f"{file_data['mode']}","assets","")
-            NEW_FILE=getFile(f"{PATH_ASSETS}/{file_data['name']}").upper()
-            addBinaryFileDsk(PROJECT_DSK_FILE,f"{PATH_DISC}/{NEW_FILE}.SCR")
+            img2scr(f"{PATH_ASSETS}/{file_data['name']}", f"{file_data['mode']}", "assets", "")
+            NEW_FILE = getFile(f"{PATH_ASSETS}/{file_data['name']}").upper()
+            addBinaryFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/{NEW_FILE}.SCR")
             if not file_data['pal']:
                 remove(f"{PATH_DISC}/{NEW_FILE}.PAL")
         ##

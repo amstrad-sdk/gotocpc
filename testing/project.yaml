@@ -2,7 +2,7 @@ Version: v1
 kind: pc2cpc
 project:
   data:
-    name: mi project molon
+    name: MOLON
     author: destroyer
   rvm:
     system: web
@@ -15,14 +15,14 @@ spec:
   - kind: bas
     name: main.bas
     concat: False
-  - kind: bas
-    name: main2.bas
-    concat: False
+  # - kind: bas
+  #   name: main2.bas
+  #   concat: False
   - kind: ascii
     name: file.txt
   - kind: c
     name: main.c
-    address: 0x4000
+    address: 40960
     include: 
   - kind: image
     name: screen.png

@@ -2,6 +2,8 @@ import os
 import sys
 from rich.console import Console
 from rich.text import Text
+import subprocess
+
 
 console = Console()
 
@@ -122,6 +124,23 @@ def removeComments(source, output):
 # @param source: source filename
 # @param output: output filename
 ##
+def convert2Dos2(source):
+    if not os.path.exists(source):
+        messageError(getFileExt(source), "The file does not exist.")
+        endCompilation("ERROR")
+        sys.exit(1)
+    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
+
+    cmd = ['unix2dos', source]
+    try:
+        output = subprocess.check_output(cmd)
+        messageInfo(getFileExt(file), f"unix to dos.")
+    except subprocess.CalledProcessError as e:
+        messageError(getFileExt(source), f'Error executing command: {e.output.decode()}')
+        sys.exit(1)
+
+    files = getFileExt(source)
+    messageInfo(files, "Convert unix to dos.")
 def convert2Dos(source, output):
     if not os.path.exists(source):
         messageError(getFileExt(source), "The file does not exist.")
