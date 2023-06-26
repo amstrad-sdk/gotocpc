@@ -5,10 +5,13 @@ from .common import consoleMessage, ConsoleColor, getFileExt, messageError, mess
 
 global IDSK
 
-if sys.platform != "win32" or sys.platform != "win64":
-    IDSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/" + sys.platform + "/iDSK"
+if  sys.platform == "win64":
+    DSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/win/iDSK.exe"
+elif sys.platform == "win32":
+    messageError("PLATFORM", f'WIN32 Platform not supported')
+    sys.exit(1)
 else:
-    IDSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/win/iDSK.exe"
+    IDSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/" + sys.platform + "/iDSK"
 
 
 # APP_PATH = os.path.dirname(os.path.abspath(__file__))
