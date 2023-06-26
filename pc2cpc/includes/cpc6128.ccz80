@@ -1,0 +1,1789 @@
+// Amstrad CPC 664/6128 library for ccz80 version 2.0.7
+// Jaunary 2012
+
+include "standard.ccz80";
+
+asm
+{
+  "; Firmware indirections",
+  "__kl_choke_off:             equ #BCC8",
+  "__kl_rom_walk:              equ #BCCB",
+  "__kl_init_back:             equ #BCCE",
+  "__kl_log_ext:               equ #BCD1",
+  "__kl_find_command:          equ #BCD4",
+  "__kl_new_frame_fly:         equ #BCD7",
+  "__kl_add_frame_fly:         equ #BCDA",
+  "__kl_del_frame_fly:         equ #BCDD",
+  "__kl_new_fast_ticker:       equ #BCE0",
+  "__kl_add_fast_ticker:       equ #BCE3",
+  "__kl_del_fast_ticker:       equ #BCE6",
+  "__kl_add_ticker:            equ #BCE9",
+  "__kl_del_ticker:            equ #BCEC",
+  "__kl_init_event:            equ #BCEF",
+  "__kl_event:                 equ #BCF2",
+  "__kl_sync_reset:            equ #BCF5",
+  "__kl_del_synchronous:       equ #BCF8",
+  "__kl_next_sync:             equ #BCFB",
+  "__kl_do_sync:               equ #BCFE",
+  "__kl_done_sync:             equ #BD01",
+  "__kl_event_disable:         equ #BD04",
+  "__kl_event_enable:          equ #BD07",
+  "__kl_disarm_event:          equ #BD0A",
+  "__kl_time_please:           equ #BD0D",
+  "__kl_time_set:              equ #BD10",
+  "__reset_entry_rst_0:        equ #0000",
+  "__low_jump_rst_1:           equ #0008",
+  "__kl_low_pchl:              equ #000B",
+  "__pcbc_instruction:         equ #000E",
+  "__side_call_rst_2:          equ #0010",
+  "__kl_side_pchl:             equ #0013",
+  "__pcde_instruction:         equ #0016",
+  "__far_call_rst_3:           equ #0018",
+  "__kl_far_pchl:              equ #001B",
+  "__pchl_instruction:         equ #001E",
+  "__ram_lam:                  equ #0020",
+  "__kl_far_call:              equ #0023",
+  "__firm_jump_rst_5:          equ #0028",
+  "__user_restart_rst_6:       equ #0030",
+  "__interrupt_entry_rst_7:    equ #0038",
+  "__ext_interrupt:            equ #003B",
+  "__kl_u_rom_enable:          equ #B900",
+  "__kl_u_rom_disable:         equ #B903",
+  "__kl_l_rom_enable:          equ #B906",
+  "__kl_l_rom_disable:         equ #B909",
+  "__kl_rom_restore:           equ #B90C",
+  "__kl_rom_select:            equ #B90F",
+  "__kl_curr_selection:        equ #B912",
+  "__kl_probe_rom:             equ #B915",
+  "__kl_rom_deselect:          equ #B918",
+  "__kl_ldir:                  equ #B91B",
+  "__kl_lddr:                  equ #B91E",
+  "__kl_poll_synchronous:      equ #B921",
+  "__kl_scan_needed:           equ #B92A",
+  "__km_initialise:            equ #BB00",
+  "__km_reset:                 equ #BB03",
+  "__km_wait_char:             equ #BB06",
+  "__km_read_char:             equ #BB09",
+  "__km_char_return:           equ #BB0C",
+  "__km_set_expand:            equ #BB0F",
+  "__km_get_expand:            equ #BB12",
+  "__km_exp_buffer:            equ #BB15",
+  "__km_wait_key:              equ #BB18",
+  "__km_read_key:              equ #BB1B",
+  "__km_test_key:              equ #BB1E",
+  "__km_get_state:             equ #BB21",
+  "__km_get_joystick:          equ #BB24",
+  "__km_set_translate:         equ #BB27",
+  "__km_get_translate:         equ #BB2A",
+  "__km_set_shift:             equ #BB2D",
+  "__km_get_shift:             equ #BB30",
+  "__km_set_control:           equ #BB33",
+  "__km_get_control:           equ #BB36",
+  "__km_set_repeat:            equ #BB39",
+  "__km_get_repeat:            equ #BB3C",
+  "__km_set_delay:             equ #BB3F",
+  "__km_get_delay:             equ #BB42",
+  "__km_arm_break:             equ #BB45",
+  "__km_disarm_break:          equ #BB48",
+  "__km_break_event:           equ #BB4B",
+  "__txt_initialise:           equ #BB4E",
+  "__txt_reset:                equ #BB51",
+  "__txt_vdu_enable:           equ #BB54",
+  "__txt_vdu_disable:          equ #BB57",
+  "__txt_output:               equ #BB5A",
+  "__txt_wr_char:              equ #BB5D",
+  "__txt_rd_char:              equ #BB60",
+  "__txt_set_graphic:          equ #BB63",
+  "__txt_win_enable:           equ #BB66",
+  "__txt_get_window:           equ #BB69",
+  "__txt_clear_window:         equ #BB6C",
+  "__txt_set_column:           equ #BB6F",
+  "__txt_set_row:              equ #BB72",
+  "__txt_set_cursor:           equ #BB75",
+  "__txt_get_cursor:           equ #BB78",
+  "__txt_cur_enable:           equ #BB7B",
+  "__txt_cur_disable:          equ #BB7E",
+  "__txt_cur_on:               equ #BB81",
+  "__txt_cur_off:              equ #BB84",
+  "__txt_validate:             equ #BB87",
+  "__txt_place_cursor:         equ #BB8A",
+  "__txt_remove_cursor:        equ #BB8D",
+  "__txt_set_pen:              equ #BB90",
+  "__txt_get_pen:              equ #BB93",
+  "__txt_set_paper:            equ #BB96",
+  "__txt_get_paper:            equ #BB99",
+  "__txt_inverse:              equ #BB9C",
+  "__txt_set_back:             equ #BB9F",
+  "__txt_get_back:             equ #BBA2",
+  "__txt_get_matrix:           equ #BBA5",
+  "__txt_set_matrix:           equ #BBA8",
+  "__txt_set_m_table:          equ #BBAB",
+  "__txt_get_m_table:          equ #BBAE",
+  "__txt_get_controls:         equ #BBB1",
+  "__txt_str_select:           equ #BBB4",
+  "__txt_swap_streams:         equ #BBB7",
+  "__gra_initialise:           equ #BBBA",
+  "__gra_reset:                equ #BBBD",
+  "__gra_move_absolute:        equ #BBC0",
+  "__gra_move_relative:        equ #BBC3",
+  "__gra_ask_cursor:           equ #BBC6",
+  "__gra_set_origin:           equ #BBC9",
+  "__gra_get_origin:           equ #BBCC",
+  "__gra_win_width:            equ #BBCF",
+  "__gra_win_height:           equ #BBD2",
+  "__gra_get_w_width:          equ #BBD5",
+  "__gra_get_w_height:         equ #BBD8",
+  "__gra_clear_window:         equ #BBDB",
+  "__gra_set_pen:              equ #BBDE",
+  "__gra_get_pen:              equ #BBE1",
+  "__gra_set_paper:            equ #BBE4",
+  "__gra_get_paper:            equ #BBE7",
+  "__gra_plot_absolute:        equ #BBEA",
+  "__gra_plot_relative:        equ #BBED",
+  "__gra_test_absolute:        equ #BBF0",
+  "__gra_test_relative:        equ #BBF3",
+  "__gra_line_absolute:        equ #BBF6",
+  "__gra_line_relative:        equ #BBF9",
+  "__gra_wr_char:              equ #BBFC",
+  "__scr_initialise:           equ #BBFF",
+  "__scr_reset:                equ #BC02",
+  "__scr_set_offset:           equ #BC05",
+  "__scr_set_base:             equ #BC08",
+  "__scr_get_location:         equ #BC0B",
+  "__scr_set_mode:             equ #BC0E",
+  "__scr_get_mode:             equ #BC11",
+  "__scr_clear:                equ #BC14",
+  "__scr_char_limits:          equ #BC17",
+  "__scr_char_position:        equ #BC1A",
+  "__scr_dot_position:         equ #BC1D",
+  "__scr_next_byte:            equ #BC20",
+  "__scr_prev_byte:            equ #BC23",
+  "__scr_next_line:            equ #BC26",
+  "__scr_prev_line:            equ #BC29",
+  "__scr_ink_encode:           equ #BC2C",
+  "__scr_ink_decode:           equ #BC2F",
+  "__scr_set_ink:              equ #BC32",
+  "__scr_get_ink:              equ #BC35",
+  "__scr_set_border:           equ #BC38",
+  "__scr_get_border:           equ #BC3B",
+  "__scr_set_flashing:         equ #BC3E",
+  "__scr_get_flashing:         equ #BC41",
+  "__scr_fill_box:             equ #BC44",
+  "__scr_flood_box:            equ #BC17",
+  "__scr_char_invert:          equ #BC4A",
+  "__scr_hw_roll:              equ #BC4D",
+  "__scr_sw_roll:              equ #BC50",
+  "__scr_unpack:               equ #BC53",
+  "__scr_repack:               equ #BC56",
+  "__scr_access:               equ #BC59",
+  "__scr_pixels:               equ #BC5C",
+  "__scr_horizontal:           equ #BC5F",
+  "__scr_vertical:             equ #BC62",
+  "__cas_initialise:           equ #BC65",
+  "__cas_set_speed:            equ #BC68",
+  "__cas_noisy:                equ #BC6B",
+  "__cas_start_motor:          equ #BC6E",
+  "__cas_stop_motor:           equ #BC71",
+  "__cas_restore_motor:        equ #BC74",
+  "__cas_in_open:              equ #BC77",
+  "__cas_in_close:             equ #BC7A",
+  "__cas_in_abandon:           equ #BC7D",
+  "__cas_in_char:              equ #BC80",
+  "__cas_in_direct:            equ #BC83",
+  "__cas_return:               equ #BC86",
+  "__cas_test_eof:             equ #BC89",
+  "__cas_out_open:             equ #BC8C",
+  "__cas_out_close:            equ #BC8F",
+  "__cas_out_abandon:          equ #BC92",
+  "__cas_out_char:             equ #BC95",
+  "__cas_out_direct:           equ #BC98",
+  "__cas_catalog:              equ #BC9B",
+  "__cas_write:                equ #BC9E",
+  "__cas_read:                 equ #BCA1",
+  "__cas_check:                equ #BCA4",
+  "__bios_set_message:         equ #C033",
+  "__bios_setup_disc:          equ #C036",
+  "__bios_select_format:       equ #C039",
+  "__bios_read_sector:         equ #C03C",
+  "__bios_write_sector:        equ #C03F",
+  "__bios_format_track:        equ #C042",
+  "__bios_move_track:          equ #C045",
+  "__bios_get_status:          equ #C048",
+  "__bios_set_retry_count:     equ #C04B",
+  "__get_sector_data:          equ #C56C",
+  "__sound_reset:              equ #BCA7",
+  "__sound_queue:              equ #BCAA",
+  "__sound_check:              equ #BCAD",
+  "__sound_arm_event:          equ #BCB0",
+  "__sound_release:            equ #BCB3",
+  "__sound_hold:               equ #BCB6",
+  "__sound_continue:           equ #BCB9",
+  "__sound_ampl_envelope:      equ #BCBC",
+  "__sound_tone_envelope:      equ #BCBF",
+  "__sound_a_address:          equ #BCC2",
+  "__sound_t_address:          equ #BCC5",
+  "__mc_boot_program:          equ #BD13",
+  "__mc_start_program:         equ #BD16",
+  "__mc_wait_flyback:          equ #BD19",
+  "__mc_set_mode:              equ #BD1C",
+  "__mc_screen_offset:         equ #BD1F",
+  "__mc_clear_inks:            equ #BD22",
+  "__mc_set_inks:              equ #BD25",
+  "__mc_reset_printer:         equ #BD28",
+  "__mc_print_char:            equ #BD2B",
+  "__mc_busy_printer:          equ #BD2E",
+  "__mc_send_printer:          equ #BD31",
+  "__mc_sound_register:        equ #BD34",
+  "__jump_restore:             equ #BD37",
+  "__km_set_locks:             equ #BD3A",
+  "__km_flush:                 equ #BD3D",
+  "__txt_ask_state:            equ #BD40",
+  "__gra_default:              equ #BD43",
+  "__gra_set_back:             equ #BD46",
+  "__gra_set_first:            equ #BD49",
+  "__gra_set_line_mask:        equ #BD4C",
+  "__gra_from_user:            equ #BD4F",
+  "__gra_fill:                 equ #BD52",
+  "__scr_set_position:         equ #BD55",
+  "__mc_print_translation:     equ #BD58",
+  "__txt_draw_cursor:          equ #BDCD",
+  "__txt_undraw_cursor:        equ #BDD0",
+  "__txt_write_char:           equ #BDD3",
+  "__txt_unwrite:              equ #BDD6",
+  "__txt_out_action:           equ #BDD9",
+  "__gra_plot:                 equ #BDDC",
+  "__gra_test:                 equ #BDDF",
+  "__gra_line:                 equ #BDE2",
+  "__scr_read:                 equ #BDE5",
+  "__scr_write:                equ #BDE8",
+  "__scr_mode_clear:           equ #BDEB",
+  "__km_test_break:            equ #BDEE",
+  "__mc_wait_printer:          equ #BDF1",
+  "__km_scan_keys:             equ #BDF4",
+  "__move_real:                equ #BD61",
+  "__integer_to_real:          equ #BD64",
+  "__binary_to_real:           equ #BD67",
+  "__real_to_integer:          equ #BD6A",
+  "__real_to_binary:           equ #BD6D",
+  "__real_fix:                 equ #BD70",
+  "__real_int:                 equ #BD73",
+  "__real_10a:                 equ #BD79",
+  "__real_addition:            equ #BD7C",
+  "__real_reverse_subtraction: equ #BD82",
+  "__real_multiplication:      equ #BD85",
+  "__real_division:            equ #BD88",
+  "__real_comparison:          equ #BD8E",
+  "__real_unary_minus:         equ #BD91",
+  "__real_signum_sgn:          equ #BD94",
+  "__set_angle_mode:           equ #BD97",
+  "__real_pi:                  equ #BD9A",
+  "__real_sqr:                 equ #BD9D",
+  "__real_power:               equ #BDA0",
+  "__real_log:                 equ #BDA3",
+  "__real_log_10:              equ #BDA6",
+  "__real_exp:                 equ #BDA9",
+  "__real_sine:                equ #BDAC",
+  "__real_cosine:              equ #BDAF",
+  "__real_tangent:             equ #BDB2",
+  "__real_arctangent:          equ #BDB5",
+  "__text_input:               equ #BD5E",
+  "__real_rnd:                 equ #BD7F",
+  "__real_rnd_0:               equ #BD8B"
+}
+
+function byte after(word, word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 3th parameter",
+  "push de                                 ; Save buffer address",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "push hl                                 ; Save parameters address",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 2nd parameter",
+  "ex   de,hl                              ; DE = event address, HL = buffer address",
+  "ld   bc,6",
+  "add  hl,bc",
+  "ld   b,#81",
+  "call __kl_init_event",
+  "pop  hl                                 ; Retore parameter address",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 1st parameter",
+  "ld   bc,0                               ; Don't repeat",
+  "pop  hl                                 ; Restore buffer address",
+  "jp   __kl_add_ticker"
+}
+
+function byte every(word, word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 3th parameter",
+  "push de                                 ; Save buffer address",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "push hl                                 ; Save parameters address",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 2nd parameter",
+  "ex   de,hl                              ; DE = event address, HL = buffer address",
+  "ld   bc,6",
+  "add  hl,bc",
+  "ld   b,#81",
+  "call __kl_init_event",
+  "pop  hl                                 ; Retore parameter address",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 1st parameter",
+  "ld   b,d",
+  "ld   c,e                                ; BC = 1st parameter copy",
+  "pop  hl                                 ; Restore buffer address",
+  "jp   __kl_add_ticker"
+}
+
+function inline word remain(word)
+{
+  "call __kl_del_ticker",
+  "ex   de,hl                              ; HL = time remaining"
+}
+
+function inline byte ei()
+{
+  "call __kl_event_enable"
+}
+
+function inline byte di()
+{
+  "call __kl_event_disable"
+}
+
+function register word time(word)
+{
+  "ld   b,h",
+  "ld   c,l                                ; BC = 1st parameter",
+  "call __kl_time_please",
+  "push bc                                 ; Save parameter value",
+  "ld   a,l",
+  "ld   (bc),a",
+  "inc  bc",
+  "ld   a,h",
+  "ld   (bc),a",
+  "inc  bc",
+  "ld   a,e",
+  "ld   (bc),a",
+  "inc  bc",
+  "ld   a,d",
+  "ld   (bc),a",
+  "pop  hl                                 ; Restore parameter value",
+  "ret"
+}
+
+function inline byte testkey(byte)
+{
+  "call __km_test_key",
+  "ld   a,#FF",
+  "jr   z,$+5                              ; Key not pressed",
+  "ld   a,#A0",
+  "and  c                                  ; Apply shift and control status"
+}
+
+function register byte joy(byte)
+{
+  "ld   b,a                                ; Save joystick number",
+  "call __km_get_joystick",
+  "ld   a,b                                ; Restore joystick number",
+  "or   a",
+  "jr   nz,__joy_1                         ; Jump if joystick number is not 0",
+  "ld   a,h",
+  "ret                                     ; Return joystick 0 status",
+  "__joy_1:",
+  "ld   a,l",
+  "ret                                     ; Return joystick 1 status"
+}
+
+function inline byte inkey()
+{
+  "call __km_read_char",
+  "jr   c,$+3                              ; Exist character",
+  "xor  a                                  ; Not exists character"
+}
+
+function inline byte clearinput()
+{
+  "call __km_read_char",
+  "jr   c,$-3"
+}
+
+function byte keydef(byte, byte, byte, byte, byte)
+{
+  "ld   hl,11",
+  "add  hl,sp",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "dec  hl",
+  "dec  hl",
+  "ld   b,(hl)                             ; B = 2nd parameter",
+  "push af                                 ; Save key number",
+  "push hl                                 ; Save parameters address",
+  "call __km_set_repeat",
+  "pop  hl                                 ; Restore parameter address",
+  "pop  af                                 ; Restore key number",
+  "dec  hl",
+  "dec  hl",
+  "ld   b,(hl)                             ; B = 3th parameter",
+  "push af                                 ; Save key number",
+  "push hl                                 ; Save parameters address",
+  "call __km_set_translate",
+  "pop  hl                                 ; Restore parameter address",
+  "pop  af                                 ; Restore key number",
+  "dec  hl",
+  "dec  hl",
+  "ld   b,(hl)                             ; B = 4th parameter",
+  "push af                                 ; Save key number",
+  "push hl                                 ; Save parameters address",
+  "call __km_set_shift",
+  "pop  hl                                 ; Restore parameter address",
+  "pop  af                                 ; Restore key number",
+  "dec  hl",
+  "dec  hl",
+  "ld   b,(hl)                             ; B = 5th parameter",
+  "jp   __km_set_control"
+}
+
+function byte key(byte, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   b,(hl)                             ; B = 1st parameter",
+  "push de                                 ; Save string address",
+  "ex de,hl                                ; HL = string address",
+  "call _strlen",
+  "ld   c,l                                ; C = string lenght",
+  "pop  hl                                 ; Restore string address",
+  "jp   __km_set_expand",
+} using strlen;
+
+function byte speedkey(byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   e,(hl)                             ; E = repeating time",
+  "inc  hl",
+  "inc  hl",
+  "ld   d,(hl)                             ; D = delay time",
+  "ex   de,hl                              ; H = D, L = E",
+  "jp   __km_set_delay"
+}
+
+function inline byte cls()
+{
+  "call __txt_clear_window"
+}
+
+function inline byte paper(byte)
+{
+  "call __txt_set_paper"
+}
+
+function inline byte pen(byte)
+{
+  "call __txt_set_pen"
+}
+
+function inline byte printc(byte)
+{
+  "call __txt_output"
+}
+
+function register byte prints(word)
+{
+  "ld   a,(hl)",
+  "or   a",
+  "ret  z",
+  "call __txt_output",
+  "inc  hl",
+  "jr   _prints"
+}
+
+function register byte printb(byte)
+{
+  "ld   hl,__printb_1                      ; HL = string buffer address",
+  "call __btoa_0",
+  "jp   _prints",
+  "__printb_1: defs 4",
+} using btoa, prints;
+
+function register byte printw(word)
+{
+  "ld   de,__printw_1",
+  "call __wtoa_0",
+  "jp   _prints",
+  "__printw_1: defs 6",
+} using wtoa, prints;
+
+function register word input(word)
+{
+  "call __txt_cur_enable",
+  "call __txt_cur_on                       ; Show cursor",
+  "ld   d,h",
+  "ld   e,l                                ; DE = 1st parameter copy",
+  "ld   bc,0                               ; Initialize characters counter",
+  "__input_1:",
+  "call __km_wait_key",
+  "cp   127",
+  "jr   nz,__input_2",
+  "ld   a,b",
+  "or   c",
+  "jr   z,__input_1                        ; String length is zero",
+  "ld   a,8",
+  "call __txt_output",
+  "ld   a,\" \"",
+  "call __txt_output",
+  "ld   a,8",
+  "call __txt_output",
+  "dec  de",
+  "dec  bc",
+  "jr   __input_1",
+  "__input_2:",
+  "cp   13",
+  "jr   z,__input_3                        ; Enter key pressed",
+  "call __txt_output",
+  "ld   (de),a",
+  "inc  de",
+  "inc  bc",
+  "jr   __input_1",
+  "__input_3:",
+  "xor  a",
+  "ld   (de),a",
+  "call __txt_cur_disable",
+  "jp   __txt_cur_off                      ; Hide cursor"
+}
+
+function byte locate(byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   a,(hl)                             ; A = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   h,(hl)                             ; H = 1st parameter",
+  "ld   l,a                                ; L = 2nd parameter copy",
+  "jp   __txt_set_cursor"
+}
+
+function inline byte pos()
+{
+  "call __txt_get_cursor",
+  "ld   a,h"
+}
+
+function inline byte vpos()
+{
+  "call __txt_get_cursor",
+  "ld   a,l"
+}
+
+function inline byte stream(byte)
+{
+  "call __txt_str_select"
+}
+
+function byte window(byte, byte, byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   e,(hl)                             ; E = 4th parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 3th parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   d,(hl)                             ; D = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   h,(hl)                             ; H = 1st parameter",
+  "ld   l,a                                ; L = 3th parameter copy",
+  "dec  h",
+  "dec  l",
+  "dec  d",
+  "dec  e                                  ; Convert to physical coordinates",
+  "jp   __txt_win_enable"
+}
+
+function byte windowswap(byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   c,(hl)                             ; C = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   b,(hl)                             ; B = 1st parameter",
+  "jp   __txt_swap_streams"
+}
+
+function byte symbolafter(byte, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   l,(hl)",
+  "ld   h,0                                ; HL = 1st parameter",
+  "ex   de,hl                              ; E =first character to change, HL = table address",
+  "jp   __txt_set_m_table"
+}
+
+function byte symbol(byte, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "ex   de,hl                              ; HL = 2nd parameter",
+  "jp   __txt_set_matrix"
+}
+
+function inline byte tag()
+{
+  "ld   a,#FF",
+  "call __txt_set_graphic"
+}
+
+function inline byte tagoff()
+{
+  "xor  a",
+  "call __txt_set_graphic"
+}
+
+function inline byte copychr()
+{
+  "call __txt_rd_char",
+}
+
+function inline byte textmode(byte)
+{
+  "call __txt_set_back"
+}
+
+function byte cursor(byte, byte)
+{
+  "ld   hl,5                                                  ",
+  "add  hl,sp                                                 ",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "or   a                                                     ",
+  "call z,__txt_cur_off                                       ",
+  "call nz,__txt_cur_on                                       ",
+  "dec  hl                                                    ",
+  "dec  hl                                                    ",
+  "ld   a,(hl)                             ; A = 2nd parameter",
+  "or   a                                                     ",
+  "jp   z,__txt_cur_disable                                   ",
+  "jp   nz,__txt_cur_enable                                   "
+}
+
+function inline byte clg()
+{
+  "call __gra_clear_window"
+}
+
+function byte origin(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_set_origin"
+}
+
+function byte graphicswindow(word, word, word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 4th parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "push hl                                 ; Save parameters address",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 3th parameter",
+  "call __gra_win_height",
+  "pop  hl                                 ; Restore parameters address",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __gra_win_width"
+}
+
+function inline byte graphicspen(byte)
+{
+  "call __gra_set_pen"
+}
+
+function inline byte graphicspaper(byte)
+{
+  "call __gra_set_paper"
+}
+
+function inline word xpos()
+{
+  "call __gra_ask_cursor",
+  "ex   de,hl                              ; HL = x coordinate"
+}
+
+function inline word ypos()
+{
+  "call __gra_ask_cursor"
+}
+
+function byte move(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_move_absolute"
+}
+
+function byte mover(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_move_relative"
+}
+
+function byte plot(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_plot_absolute"
+}
+
+function byte plotr(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_plot_relative"
+}
+
+function byte draw(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_line_absolute"
+}
+
+function byte drawr(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_line_relative"
+}
+
+function register byte fill(byte)
+{
+  "ld   de,__fill_1",
+  "ld   hl,__fill_2",
+  "jp   __gra_fill",
+  "__fill_1:                   equ 512",
+  "__fill_2: defs __fill_1"
+}
+
+function byte test(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_test_absolute"
+}
+
+function byte testr(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = x, HL = y",
+  "jp   __gra_test_relative"
+}
+
+function inline byte graphicsmode(byte)
+{
+  "call __scr_access"
+}
+
+function byte mask(byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   a,(hl)                             ; A = 2nd parameter",
+  "call __gra_set_first",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "jp   __gra_set_line_mask"
+}
+
+function inline byte mode(byte)
+{
+  "call __scr_set_mode"
+}
+
+function byte border(byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   c,(hl)                             ; C = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   b,(hl)                             ; B = 1st parameter",
+  "jp   __scr_set_border"
+}
+
+function byte ink(byte, byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   c,(hl)                             ; C = 3th parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   b,(hl)                             ; B = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "jp   __scr_set_ink"
+}
+
+function byte speedink(byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   a,(hl)                             ; A = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   h,(hl)                             ; H = 1st parameter",
+  "ld   l,a                                ; L = 2nd parameter copy",
+  "jp   __scr_set_flashing"
+}
+
+function inline byte frame()
+{
+  "call __mc_wait_flyback"
+}
+
+function register byte openin(word)
+{
+  "push hl                                 ; Save filename address",
+  "call _strlen",
+  "ld   b,l                                ; B = filename lenght",
+  "pop  hl                                 ; Restore filename address",
+  "ld   de,__openin_1",
+  "jp   __cas_in_open",
+  "__openin_1: defs 2048",
+} using strlen;
+
+function inline byte closein()
+{
+  "call __cas_in_close"
+}
+
+function inline byte finputc()
+{
+  "call __cas_in_char",
+  "jr   nc,$+4",
+  "jr   nz,$+3",
+  "xor  a"
+}
+
+function register word finputs(word)
+{
+  "ld   d,h",
+  "ld   e,l                                ; DE = 1st parameter copy",
+  "__finputs_1:",
+  "call __cas_in_char",
+  "jr   nc,__finputs_3                     ; Reading error",
+  "jr   z,__finputs_3                      ; Reading error", 
+  "cp   13",
+  "jr   nz,__finputs_2",
+  "call __cas_in_char",
+  "jr   nc,__finputs_3                     ; Reading error",
+  "jr   z,__finputs_3                      ; Reading error", 
+  "cp   10",
+  "jr   z,__finputs_3                      ; EOL found",
+  "call __cas_return",
+  "ld   a,13",
+  "__finputs_2:",
+  "ld   (de),a",
+  "inc  de",
+  "jr   __finputs_1",
+  "__finputs_3:",
+  "xor  a",
+  "ld   (de),a",
+  "ret"
+}
+
+function inline byte eof()
+{
+  "call __cas_test_eof",
+  "ld   a,0",
+  "jr   c,$+5",
+  "jr   z,$+3",
+  "inc  a"
+}
+
+function inline word load(word)
+{
+  "call __cas_in_direct"
+}
+
+function register byte openout(word)
+{
+  "push hl                                 ; Save filename address",
+  "call _strlen",
+  "ld   b,l                                ; B = filename lenght",
+  "pop  hl                                 ; Restore filename address",
+  "ld   de,__openout_1",
+  "jp   __cas_out_open",
+  "__openout_1: defs 2048",
+} using strlen;
+
+function inline byte closeout()
+{
+  "call __cas_out_close"
+}
+
+function inline byte fprintc(byte)
+{
+  "call __cas_out_char"
+}
+
+function register byte fprints(word)
+{
+  "ld   a,(hl)",
+  "or   a",
+  "ret  z",
+  "call __cas_out_char",
+  "inc  hl",
+  "jr   _fprints"
+}
+
+function register byte fprintb(byte)
+{
+  "ld   hl,__fprintb_1                     ; HL = string buffer address",
+  "call __btoa_0",
+  "jp   _fprints",
+  "__fprintb_1: defs 4",
+} using btoa, fprints;
+
+function register byte fprintw(word)
+{
+  "ld   de,__fprintw_1",
+  "call __wtoa_0",
+  "jp   _fprints",
+  "__fprintw_1: defs 6",
+} using wtoa, fprints;
+
+function byte save(word, word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   c,(hl)",
+  "inc  hl",
+  "ld   b,(hl)                             ; BC = 3th parameter",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ld   a,2                                ; A = 2 for binary type file",
+  "jp   __cas_out_direct"
+}
+
+function register byte speedwrite(byte)
+{
+  "or   a",
+  "jr   nz,__speedwrite_1",
+  "ld   hl,333",
+  "ld   a,25",
+  "jp   __cas_set_speed",
+  "__speedwrite_1:",
+  "ld   hl,107",
+  "ld   a,50",
+  "jp   __cas_set_speed"
+}
+
+function byte sound(byte, word, word, byte, byte, byte, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   a,(hl)",
+  "ld   (__sound_1+5),a                    ; Store noise",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)",
+  "ld   (__sound_1+2),a                    ; Store tone envelope",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)",
+  "ld   (__sound_1+1),a                    ; Store volume envelope",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)",
+  "ld   (__sound_1+6),a                    ; Store initial volume",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)",
+  "ld   (__sound_1+7),de                   ; Store duration",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)",
+  "ld   (__sound_1+3),de                   ; Store frequency",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)",
+  "ld   (__sound_1),a                      ; Store channel",
+  "ld   hl,__sound_1",
+  "jp   __sound_queue",
+  "__sound_1: defs 9"
+}
+
+function inline byte release(byte)
+{
+  "call __sound_release"
+}
+
+function byte ent(byte, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "ex   de,hl                              ; HL = sections address",
+  "jp   __sound_tone_envelope"
+}
+
+function byte env(byte, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "ex   de,hl                              ; HL = sections address",
+  "jp   __sound_ampl_envelope"
+}
+
+function inline byte sq(byte)
+{
+  "call __sound_check"
+}
+
+function byte onsq(byte, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "inc  hl",
+  "ld   a,(hl)                             ; A = 1st parameter",
+  "ld   b,#81",
+  "ld   hl,__onsq_1",
+  "call __kl_init_event",
+  "ld   hl,__onsq_1",
+  "jp   __sound_arm_event",
+  "__onsq_1: defs 7"
+}
+
+function inline byte lprintc(byte)
+{
+  "call __mc_print_char"
+}
+
+function register byte lprints(word)
+{
+  "ld   a,(hl)",
+  "or   a",
+  "ret  z",
+  "call __mc_print_char",
+  "inc  hl",
+  "jr   _lprints"
+}
+
+function register byte lprintb(byte)
+{
+  "ld   hl,__lprintb_1                     ; HL = string buffer address",
+  "call __btoa_0",
+  "jp   _lprints",
+  "__lprintb_1: defs 4",
+} using btoa, lprints;
+
+function register byte lprintw(word)
+{
+  "ld   de,__lprintw_1",
+  "call __wtoa_0",
+  "jp   _lprints",
+  "__lprintw_1: defs 6",
+} using wtoa, lprints;
+
+function word fcpy(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __move_real"
+}
+
+function word btof(word, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   a,(hl)                             ; A = 2nd parameter",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 1st parameter",
+  "ld   h,0",
+  "ld   l,a                                ; HL = 2nd parameter copy",
+  "xor  a",
+  "jp   __integer_to_real"
+}
+
+function word wtof(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = real address, HL = value",
+  "xor  a",
+  "jp   __integer_to_real"
+}
+
+function register byte ftob(word)
+{
+  "call __real_to_integer",
+  "ld   a,l",
+  "ret  p                                  ; Value is positive",
+  "neg",
+  "ret"
+}
+
+function register word ftow(word)
+{
+  "call __real_to_integer",
+  "ret  p                                  ; Value is positive",
+  "ld   de,0",
+  "ex   de,hl",
+  "or   a",
+  "sbc  hl,de",
+  "ret"
+}
+
+function word ltof(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = real address, HL = long address",
+  "push de                                 ; Save real address",
+  "ld   bc,4",
+  "ldir",
+  "pop  hl                                 ; Restore real address",
+  "xor  a",
+  "jp   __binary_to_real"
+}
+
+function word ftol(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ex   de,hl                              ; DE = real address, HL = long address",
+  "push de                                 ; Save real address",
+  "ld   bc,4",
+  "ldir",
+  "pop  hl                                 ; Restore real address",
+  "xor  a",
+  "call __real_to_binary",
+  "ld   a,b",
+  "rlca",
+  "ret  nc                                 ; Value is positive",
+  "ex   de,hl                              ; Save result address in DE",
+  "ld   b,4",
+  "or   a",
+  "__ftol_1:",
+  "ld   a,0",
+  "sbc  a,(hl)",
+  "ld   (hl),a",
+  "inc  hl",
+  "djnz __ftol_1",
+  "ex   de,hl                              ; HL = Restore result address in HL",
+  "ret"
+}
+
+function word ftoa(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "__ftoa_0:                               ; Entry for another functions",
+  "push hl",
+  "push hl                                 ; Save string address (twice)",
+  "ld   hl,__ftoa_8",
+  "ld   (__ftoa_7),hl                      ; Initialize weight address",
+  "ld   hl,__ftoa_9",
+  "call __move_real                        ; Copy real value",
+  "ld   a,3",
+  "call __real_10a                         ; Pass 3 decimal digits to integer part",
+  "call __real_to_binary",
+  "pop  hl                                 ; Restore string address",
+  "bit  7,b",
+  "jr   z,__ftoa_1",
+  "ld   (hl),\"-\"",
+  "inc  hl",
+  "__ftoa_1:",
+  "ld   b,9",
+  "__ftoa_2:",
+  "push bc                                 ; Save digit counter",
+  "ld   a,b",
+  "cp   2",
+  "jr   nz,__ftoa_3",
+  "ld   (hl),\".\"",
+  "inc  hl",
+  "__ftoa_3:",
+  "push hl                                 ; Save string pointer",
+  "ld   c,\"0\"-1",
+  "__ftoa_4:",
+  "inc  c",
+  "ld   de,__ftoa_9",
+  "ld   hl,(__ftoa_7)",
+  "or   a",
+  "ld   b,4",
+  "__ftoa_5:",
+  "ld   a,(de)",
+  "sbc  a,(hl)",
+  "ld   (de),a",
+  "inc  de",
+  "inc  hl",
+  "djnz __ftoa_5",
+  "jr   nc,__ftoa_4",
+  "ld   de,__ftoa_9",
+  "ld   hl,(__ftoa_7)",
+  "or   a",
+  "ld   b,4",
+  "__ftoa_6:",
+  "ld   a,(de)",
+  "adc  a,(hl)",
+  "ld   (de),a",
+  "inc  de",
+  "inc  hl",
+  "djnz __ftoa_6",
+  "pop  hl                                 ; Restore string pointer",
+  "ld   (hl),c",
+  "inc  hl",
+  "ld   de,(__ftoa_7)",
+  "inc  de",
+  "inc  de",
+  "inc  de",
+  "inc  de",
+  "ld   (__ftoa_7),de                      ; Setup weight address",
+  "pop  bc                                 ; Restore digit counter",
+  "djnz __ftoa_2",
+  "ld   a,(__ftoa_9)",
+  "add  a,\"0\"",
+  "ld   (hl),a                             ; Store units",
+  "inc  hl",
+  "ld   (hl),0",
+  "pop  hl                                 ; Restore string address",
+  "ret",
+  "__ftoa_7: defw 0",
+  "__ftoa_8: defb #00, #CA, #9A, #3B       ; Weight 1000000000",
+  "          defb #00, #E1, #F5, #05       ; Weight 100000000",
+  "          defb #80, #96, #98, #00       ; Weight 10000000",
+  "          defb #40, #42, #0F, #00       ; Weight 1000000",
+  "          defb #A0, #86, #01, #00       ; Weight 100000",
+  "          defb #10, #27, #00, #00       ; Weight 10000",
+  "          defb #E8, #03, #00, #00       ; Weight 1000",
+  "          defb #64, #00, #00, #00       ; Weight 100",
+  "          defb #0A, #00, #00, #00       ; Weight 10",
+  "__ftoa_9: defs 5                        ; Value"
+}
+
+function word atof(word, word)
+{
+  "ld   de,__atof_8",
+  "ld   hl,__atof_11",
+  "call __move_real                        ; Copy real value 1 to weight",
+  "xor  a",
+  "ld   (__atof_10),a                      ; Initialize decimal point counter",
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd paraemter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "ld   a,(de)",
+  "cp   \"-\"",
+  "jr   nz,__atof_1                        ; Not specified minus sign",
+  "push hl                                 ; Save real address",
+  "ld   hl,__atof_11",
+  "call __real_unary_minus",
+  "inc  de",
+  "pop  hl                                 ; Restore real address",
+  "__atof_1:",
+  "push de                                 ; Save string address",
+  "push hl",
+  "push hl                                 ; Save real address (twice)",
+  "ld   b,-2",
+  "__atof_2:",
+  "inc  b",
+  "ld   a,(de)",
+  "cp   \"0\"",
+  "jr   c,__atof_3",
+  "cp   \"9\"+1",
+  "jr   nc,__atof_3",
+  "inc  de",
+  "jr   __atof_2",
+  "__atof_3:",
+  "ld   a,b                                ; A = digits number in integer part minus one",
+  "ld   hl,__atof_11",
+  "call __real_10a",
+  "pop  hl                                 ; Restore real address",
+  "xor  a",
+  "ld   b,5",
+  "__atof_4:",
+  "ld   (hl),a",
+  "inc  hl",
+  "djnz __atof_4                           ; Real value = 0",
+  "pop  hl                                 ; Restore real address",
+  "pop  de                                 ; Restore string address",
+  "__atof_5:",
+  "ld   a,(de)",
+  "cp   \".\"",
+  "jr   nz,__atof_6",
+  "ld   a,(__atof_10)",
+  "or   a",
+  "ret  nz                                 ; Found a second decimal point",
+  "inc  a",
+  "ld   (__atof_10),a",
+  "jr   __atof_7",
+  "__atof_6:",
+  "cp   \"0\"",
+  "ret  c                                  ; Found a non digit",
+  "cp   \"9\"+1",
+  "ret  nc                                 ; Found a non digit",
+  "push de                                 ; Save string pointer",
+  "push hl",
+  "push hl                                 ; Save real address",
+  "sub  \"0\"",
+  "ld   de,__atof_12",
+  "ld   h,0",
+  "ld   l,a",
+  "xor  a",
+  "call __integer_to_real",
+  "ld   de,__atof_11",
+  "call __real_multiplication",
+  "pop  de                                 ; Restore real address",
+  "ex   de,hl                              ; DE = digit value, HL = real address",
+  "call __real_addition",
+  "ld   hl,__atof_11",
+  "ld   de,__atof_9",
+  "call __real_division",
+  "pop  hl                                 ; Restore real address",
+  "pop  de                                 ; Restore string pointer",
+  "__atof_7:",
+  "inc  de",
+  "jr   __atof_5",
+  "__atof_8: defb #00, #00, #00, #00, #81  ; Real value 1",
+  "__atof_9: defb #00, #00, #00, #20, #84  ; Real value 10",
+  "__atof_10: defb 0                       ; Decimal point counter",
+  "__atof_11: defs 5                       ; Weight",
+  "__atof_12: defs 5                       ; Digit value"
+}
+
+function word add(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd paraemter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __real_addition"
+}
+
+function word sub(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd paraemter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "call __real_reverse_subtraction",
+  "jp   __real_unary_minus"
+}
+
+function word mul(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd paraemter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __real_multiplication"
+}
+
+function word div(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd paraemter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __real_division"
+}
+
+function byte cmp(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd paraemter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __real_comparison"
+}
+
+function inline word abs(word)
+{
+  "call __real_signum_sgn",
+  "call c,__real_unary_minus"
+}
+
+function inline word atn(word)
+{
+  "call __real_arctangent"
+}
+
+function inline word cos(word)
+{
+  "call __real_cosine"
+}
+
+function inline word exp(word)
+{
+  "call __real_exp"
+}
+
+function inline word fix(word)
+{
+  "call __real_fix",
+  "xor  a",
+  "call __binary_to_real"
+}
+
+function inline word int(word)
+{
+  "call __real_int",
+  "xor  a",
+  "call __binary_to_real"
+}
+
+function inline word log(word)
+{
+  "call __real_log"
+}
+
+function inline word log10(word)
+{
+  "call __real_log_10"
+}
+
+function inline word neg(word)
+{
+  "call __real_unary_minus"
+}
+
+function inline word pi(word)
+{
+  "call __real_pi"
+}
+
+function word pow(word, word)
+{
+  "ld   hl,2",
+  "add  hl,sp",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 2nd parameter",
+  "inc  hl",
+  "ld   a,(hl)",
+  "inc  hl",
+  "ld   h,(hl)",
+  "ld   l,a                                ; HL = 1st parameter",
+  "jp   __real_power"
+}
+
+function word round(word, byte)
+{
+  "ld   hl,3",
+  "add  hl,sp",
+  "ld   a,(hl)                             ; A = 2nd parameter",
+  "inc  hl",
+  "ld   e,(hl)",
+  "inc  hl",
+  "ld   d,(hl)                             ; DE = 1st parameter",
+  "push de                                 ; Save real address",
+  "push af",
+  "push af                                 ; Save precision (twice)",
+  "ld   de,__round_1",
+  "ld   hl,__round_2",
+  "call __move_real                        ; Copy real value 1 to work space",
+  "pop  af                                 ; Restore precision",
+  "call __real_10a",
+  "pop  af                                 ; Restore precision",
+  "pop  hl                                 ; Restore real address",
+  "call __real_10a",
+  "call __real_to_binary",
+  "ld   a,b",
+  "call __binary_to_real",
+  "ld   de,__round_2",
+  "jp   __real_division",
+  "__round_1: defb #00, #00, #00, #00, #81 ; Real value 1",
+  "__round_2: defs 5                       ; Work space"
+}
+
+function inline byte sgn(word)
+{
+  "call __real_signum_sgn"
+}
+
+function inline word sin(word)
+{
+  "call __real_sine"
+}
+
+function inline word sqr(word)
+{
+  "call __real_sqr"
+}
+
+function inline word tan(word)
+{
+  "call __real_tangent"
+}
+
+function inline byte deg()
+{
+  "ld   a,#FF",
+  "call __set_angle_mode"
+}
+
+function inline byte rad()
+{
+  "xor  a",
+  "call __set_angle_mode"
+}
+
+function register byte printf(word)
+{
+  "ld   de,__printf_1",
+  "ex   de,hl                              ; DE = value, HL = string address",
+  "call __ftoa_0",
+  "jp   _prints",
+  "__printf_1: defs 13",
+} using ftoa, prints;
+
+function register byte lprintf(word)
+{
+  "ld   de,__lprintf_1",
+  "ex   de,hl                              ; DE = value, HL = string address",
+  "call __ftoa_0",
+  "jp   _lprints",
+  "__lprintf_1: defs 13",
+} using ftoa, lprints;
+
+function register byte fprintf(word)
+{
+  "ld   de,__fprintf_1",
+  "ex   de,hl                              ; DE = value, HL = string address",
+  "call __ftoa_0",
+  "jp   _fprints",
+  "__fprintf_1: defs 13",
+} using ftoa, fprints;

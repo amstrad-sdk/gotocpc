@@ -12,6 +12,10 @@ setup(
     description=DESCRIPTION,
     license="GPL",
     packages=find_packages(),
+    package_data={
+        'includes': ['includes/*'],
+        'templates': ['templates/*']
+    },
     install_requires=[
         'click',
         'configparser',

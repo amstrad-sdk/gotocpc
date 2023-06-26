@@ -1,0 +1,2 @@
+recursive-include pc2cpc/includes *.ccz80
+recursive-include pc2cpc/templates *.*
