@@ -1,2 +1,5 @@
 recursive-include pc2cpc/includes *.ccz80
 recursive-include pc2cpc/templates *.*
+recursive-include pc2cpc/bin/linux *.*
+recursive-include pc2cpc/bin/darwin *.*
+recursive-include pc2cpc/bin/win32 *.*

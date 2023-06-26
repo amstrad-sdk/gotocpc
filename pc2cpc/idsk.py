@@ -3,10 +3,18 @@ import subprocess
 import sys
 from .common import consoleMessage, ConsoleColor, getFileExt, messageError, messageInfo, messageWarning, fileExist
 
+global IDSK
+
+if sys.platform != "win32" or sys.platform != "win64":
+    IDSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/" + sys.platform + "/iDSK"
+else:
+    IDSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/win/iDSK.exe"
+
+
+# APP_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def createDskFile(imagefile):
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    IDSK = str(SDK4BASIC_PATH) + '/bin/iDSK'
+
     cmd = [IDSK, '-n', imagefile]
 
     try:
@@ -18,15 +26,7 @@ def createDskFile(imagefile):
 
 
 def addBasFileDsk(imagefile, file):
-    # ruta_actual = os.path.dirname(os.path.realpath(__file__))
-    # imagefile = os.getcwd() + "/" + imagefile
-    # file = os.getcwd() + "/" + file
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    # print(imagefile)
-    # print(file)
-    # fileExist(imagefile)
-    # fileExist(file)
-    cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, "-i", file, '-t', '0']
+    cmd = [IDSK, imagefile, "-i", file, '-t', '0']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         messageInfo(getFileExt(file), f"Added file to dsk image.")
@@ -35,9 +35,7 @@ def addBasFileDsk(imagefile, file):
         sys.exit(1)
 
 def addBinaryFileDsk(imagefile, file):
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-
-    cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, "-i", file, '-t', '1']
+    cmd = [IDSK, imagefile, "-i", file, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         messageInfo(getFileExt(file), f"Added file to dsk image.")
@@ -47,9 +45,7 @@ def addBinaryFileDsk(imagefile, file):
 
 
 def addBinFileDsk(imagefile, file, laddress):
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    # cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, '-i', file, '-e',eaddress,'-c', laddress,'-t', '1']
-    cmd = [SDK4BASIC_PATH + '/bin/iDSK', f"{imagefile}", '-i', file, '-c', laddress, '-t', '1']
+    cmd = [IDSK, f"{imagefile}", '-i', file, '-c', laddress, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         messageInfo(getFileExt(file), f"Added file to dsk image:\n           address: {laddress} ")
@@ -60,8 +56,7 @@ def addBinFileDsk(imagefile, file, laddress):
 
 def extractFileDsk(imagefile, file):
     FNULL = open(os.devnull, 'w')
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
-    cmd = [SDK4BASIC_PATH + '/bin/iDSK', imagefile, "-g", file]
+    cmd = [IDSK, imagefile, "-g", file]
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:

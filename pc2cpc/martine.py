@@ -7,6 +7,17 @@ import os
 import sys
 from .common import consoleMessage, ConsoleColor, getFileExt, messageError, messageInfo,messageWarning
 
+
+global MARTINE
+
+if sys.platform != "win32" or sys.platform != "win64":
+    MARTINE = os.path.dirname(os.path.abspath(__file__)) + "/bin/" + sys.platform + "/martine"
+else:
+    MARTINE = os.path.dirname(os.path.abspath(__file__)) + "/bin/win/martine.exe"
+
+
+# APP_PATH = os.path.dirname(os.path.abspath(__file__))
+
 ##
 # Concar Bas files
 #
@@ -16,16 +27,15 @@ from .common import consoleMessage, ConsoleColor, getFileExt, messageError, mess
 # @param dsk: True or false if the dsk file is generated
 ##
 def img2scr(filename, mode, fileout, dsk):
-    
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
+
     TMP_FOLDER = fileout + "/f-"+os.path.basename(filename)
     TMP_FILE = os.path.basename(os.path.splitext(filename)[0])
     TMP_JSON = TMP_FOLDER + "/" + TMP_FILE+".json"
     
     if dsk:
-        cmd = [SDK4BASIC_PATH + '/bin/martine', '-in', filename, '-mode', str(mode), '-out', TMP_FOLDER, '-json','-dsk']
+        cmd = [MARTINE, '-in', filename, '-mode', str(mode), '-out', TMP_FOLDER, '-json','-dsk']
     else:
-        cmd = [SDK4BASIC_PATH + '/bin/martine', '-in', filename, '-mode', str(mode), '-out', TMP_FOLDER, '-json']
+        cmd = [MARTINE, '-in', filename, '-mode', str(mode), '-out', TMP_FOLDER, '-json']
     
     try:
         if fileout:
@@ -70,14 +80,13 @@ def img2scr(filename, mode, fileout, dsk):
 ##
 def img2spr(filename, mode, width, height, out):
     
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
     TMP_FOLDER = out + "/f-"+os.path.basename(filename)
     ASM_FILE = os.path.basename(os.path.splitext(filename)[0])
     TMP_OBJ = TMP_FOLDER + "/" + ASM_FILE.upper()+".TXT"
     TMP_C = TMP_FOLDER + "/" + ASM_FILE.upper()+"C.TXT"
     OBJ_FOLDER = "obj/"
     TMP_JSON = TMP_FOLDER + "/" + ASM_FILE+".json"
-    cmd = [SDK4BASIC_PATH + '/bin/martine', '-in', filename, '-width', str(width),'-height',str(height),'-mode', str(mode), '-out', TMP_FOLDER, '-json','-noheader']
+    cmd = [MARTINE, '-in', filename, '-width', str(width),'-height',str(height),'-mode', str(mode), '-out', TMP_FOLDER, '-json','-noheader']
     
     try:
         if out:

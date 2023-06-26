@@ -5,7 +5,7 @@ from .common import consoleMessage, ConsoleColor, getFileExt, getFile, getFileEx
 import shutil
 
 def compile(file,file_out,address, include):
-    CCZ80 = os.path.dirname(os.path.abspath(__file__)) + "/bin/" + sys.platform + "/ccz80.exe"
+    CCZ80 = os.path.dirname(os.path.abspath(__file__)) + "/bin/ccz80.exe"
     APP_PATH = os.path.dirname(os.path.abspath(__file__))
     if sys.platform != "win32" or sys.platform != "win64":
         cmd = ['mono', CCZ80, file, '/org='+address, '/include='+ APP_PATH + '/includes;'+ include]
