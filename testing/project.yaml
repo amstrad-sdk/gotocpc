@@ -10,6 +10,9 @@ project:
     run: run"MAIN.BAS"
   concatenate:
     out: MAIN23.BAS
+  m4board:
+    publish: False
+    folder: pruebas
 spec:
   files:
   - kind: bas

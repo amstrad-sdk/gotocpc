@@ -44,7 +44,7 @@ def messageError(file, message):
 ##
 def messageInfo(file, message):
     console.print(
-        "[bold blue]\[" + str(file) + "][/bold blue][bold green] " + message + "[/bold green]")
+        "[blue]\[" + str(file) + "][/blue][white] " + message + "[/white]")
 
 
 # def checkProjectValue(text, value):

@@ -20,7 +20,8 @@ setup(
         'click',
         'configparser',
         'rich',
-        'PyYAML'
+        'PyYAML',
+        'jinja2'
     ],
     python_requires='>=3.6',
     classifiers=[

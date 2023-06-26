@@ -33,15 +33,6 @@ def addBasFileDsk(imagefile, file):
     except subprocess.CalledProcessError as e:
         messageError(getFileExt(imagefile), f'Error executing command: {e.output.decode()}')
         sys.exit(1)
-    # comando = SDK4BASIC_PATH + '/bin/iDSK ' + imagefile + " -i " + file + ' -t 0'
-    # # Ejecutar el comando y capturar la salida
-    # salida = subprocess.check_output(comando, shell=True)
-
-    # # Decodificar la salida en formato UTF-8
-    # salida_decodificada = salida.decode("utf-8")
-
-    # # Imprimir la salida
-    # print(salida_decodificada)
 
 def addBinaryFileDsk(imagefile, file):
     SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
