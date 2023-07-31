@@ -13,7 +13,15 @@ setup(
     license="GPL",
     packages=find_packages(),
     package_data={
-        'bin': ['bin/*'],
+        'bin': [
+            'bin/linux/iDSK',
+            'bin/linux/martine'],
+# include gotocpc/bin/darwin/iDSK
+# include gotocpc/bin/darwin/martine
+# include gotocpc/bin/win/iDSK.exe
+# include gotocpc/bin/win/martine.exe
+# include gotocpc/bin/win/cyggcc_s-1.dll
+# include gotocpc/bin/win/cygwin1.dll
         'includes': ['includes/*'],
         'templates': ['templates/*']
     },
