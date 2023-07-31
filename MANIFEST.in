@@ -1,5 +1,10 @@
 recursive-include gotocpc/includes *.ccz80
 recursive-include gotocpc/templates *.*
-recursive-include gotocpc/bin/linux *.*
-recursive-include gotocpc/bin/darwin *.*
-recursive-include gotocpc/bin/win32 *.*
+include gotocpc/bin/linux/iDSK
+include gotocpc/bin/linux/martine
+include gotocpc/bin/darwin/iDSK
+include gotocpc/bin/darwin/martine
+include gotocpc/bin/win/iDSK.exe
+include gotocpc/bin/win/martine.exe
+include gotocpc/bin/win/cyggcc_s-1.dll
+include gotocpc/bin/win/cygwin1.dll
