@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from pc2cpc import __version__ as version
+from gotocpc import __version__ as version
 
 VERSION = version
 DESCRIPTION = 'Software Developer Kit for programming in Basic for Amstrad CPC'
@@ -13,6 +13,7 @@ setup(
     license="GPL",
     packages=find_packages(),
     package_data={
+        'bin': ['bin/*'],
         'includes': ['includes/*'],
         'templates': ['templates/*']
     },
@@ -37,7 +38,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'pc2cpc= pc2cpc.__main__:main',
+            'gotocpc=gotocpc.__main__:main',
+            'go2cpc=gotocpc.__main__:main'
         ]
     }
 )

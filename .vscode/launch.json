@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PC2CPC",
+            "name": "GOTOCPC",
             "type": "python",
             "request": "launch",
-            "module": "pc2cpc",
+            "module": "gotocpc",
             "cwd": "${workspaceFolder}/testing",
             "justMyCode": true,
             "env": {
