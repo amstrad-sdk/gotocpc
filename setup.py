@@ -5,7 +5,7 @@ VERSION = version
 DESCRIPTION = 'Software Developer Kit for programming in Basic for Amstrad CPC'
 
 setup(
-    name='pc2cpc',
+    name='gotocpc',
     version=VERSION,
     author="Destroyer",
     author_email="<destroyer.dcf@gmail.com>",
