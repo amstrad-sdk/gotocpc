@@ -18,15 +18,16 @@ else:
 
 def createDskFile(imagefile):
 
-    cmd = [IDSK, '-n', imagefile]
+    cmd = [IDSK, imagefile, "-n"]
 
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(getFileExt(imagefile), f"Create image DSK.")
+        if not os.path.isfile(imagefile):
+            messageError(getFileExt(imagefile), f'Error generating disk image')
+            sys.exit(1)
     except subprocess.CalledProcessError as e:
         messageError(getFileExt(imagefile), f'Error executing command: {e.output.decode()}')
         sys.exit(1)
-
 
 def addBasFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '0']

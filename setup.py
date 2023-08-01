@@ -31,7 +31,8 @@ setup(
         'configparser',
         'rich',
         'PyYAML',
-        'jinja2'
+        'jinja2',
+        'emoji'
     ],
     python_requires='>=3.6',
     classifiers=[

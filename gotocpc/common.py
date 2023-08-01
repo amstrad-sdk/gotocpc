@@ -34,7 +34,7 @@ def messageWarning(file, message):
 ##
 def messageError(file, message):
     console.print(
-        "[bold blue]\[" + str(file) + "][/bold blue][bold red] " + message + "[/bold red]")
+        "[bold blue]\[❌][" + str(file) + "][/bold blue][bold red] " + message + "[/bold red]")
 
 ##
 # Print message info
@@ -44,7 +44,7 @@ def messageError(file, message):
 ##
 def messageInfo(file, message):
     console.print(
-        "[blue]\[" + str(file) + "][/blue][white] " + message + "[/white]")
+        "[blue]\[✅]\[" + str(file) + "][/blue][white] " + message + "[/white]")
 
 
 # def checkProjectValue(text, value):
@@ -178,7 +178,7 @@ def concatFile(source, output):
 ##
 def fileExist(source):
     if not os.path.isfile(source):
-        messageError(getFileExt(source), " File does not exist.")
+        messageError(getFileExt(source), "File does not exist.")
         sys.exit(1)
 
 ##

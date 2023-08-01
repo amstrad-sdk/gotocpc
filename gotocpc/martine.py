@@ -42,8 +42,8 @@ def img2scr(filename, mode, fileout, dsk):
             output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
             if not os.path.exists(fileout):
                 os.makedirs(fileout)
-            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.PAL'), "disc")
-            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.SCR'), "disc")
+            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.PAL'), "CPC")
+            shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.SCR'), "CPC")
         else:
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:

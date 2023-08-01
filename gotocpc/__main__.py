@@ -38,12 +38,13 @@ def main(file, mode):
         data = yaml.safe_load(file)
 
     SDK4BASIC_PATH       = os.environ.get('SDK4BASIC_PATH')
+    PWD                  = os.getcwd() + "/"
     NUMBER_CONCAT_FILES  = sum(1 for item in data['spec']['files'] if item.get('kind') == 'bas' and item.get('concat') == True)
     COUNT                = 0
-    PATH_DISC            = "disc"
-    PATH_SRC             = "src"
-    PATH_DSK             = "dsk"
-    PATH_ASSETS          = "assets"
+    PATH_DISC            = PWD + "CPC"
+    PATH_SRC             = PWD + "src"
+    PATH_DSK             = PWD + "dsk"
+    PATH_ASSETS          = PWD + "assets"
     PROJECT_NOT_SECTIONS = ["PROJECT", "CONCATENATE", "RVM"]
     PROJECT_NAME         = data['project']['data'].get('name', 'No project mame')
     PROJECT_AUTHOR       = data['project']['data'].get('author', 'No author mame')
@@ -52,7 +53,6 @@ def main(file, mode):
     PROJECT_RVM_RUN      = data['project']['rvm'].get('name', 'run"main.bas"')
     PROJECT_CONCAT_OUT   = PATH_DISC + "/" + data['project']['concatenate'].get('out', 'PROJECT.BAS')
     PROJECT_DSK_FILE     = f"{PATH_DSK}/{PROJECT_NAME}.DSK"
-    PWD                  = os.getcwd() + "/"
     RVM_WEB              = PWD + "cpc.html"
 
     ##
