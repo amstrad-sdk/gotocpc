@@ -12,19 +12,20 @@ setup(
     description=DESCRIPTION,
     license="GPL",
     packages=find_packages(),
-    package_data={
-        'bin': [
-            'bin/linux/iDSK',
-            'bin/linux/martine'],
-# include gotocpc/bin/darwin/iDSK
-# include gotocpc/bin/darwin/martine
-# include gotocpc/bin/win/iDSK.exe
-# include gotocpc/bin/win/martine.exe
-# include gotocpc/bin/win/cyggcc_s-1.dll
-# include gotocpc/bin/win/cygwin1.dll
-        'includes': ['includes/*'],
-        'templates': ['templates/*']
-    },
+    data_files=[
+        ('gotocpc/bin/linux', ['gotocpc/bin/linux/iDSK', 'gotocpc/bin/linux/martine']),
+        ('gotocpc/bin/darwin',['gotocpc/bin/darwin/iDSK', 'gotocpc/bin/darwin/martine']),
+        ('gotocpc/bin/win',   ['gotocpc/bin/win/iDSK.exe', 'gotocpc/bin/win/martine.exe']),
+        ('gotocpc/bin/win',   ['gotocpc/bin/win/ccz80.exe', 'gotocpc/bin/win/cygwin1.dll']),
+        ('gotocpc/bin/win',   ['gotocpc/bin/win/cyggcc_s-1.dll']),
+        ('gotocpc/templates', ['gotocpc/templates/cpc.j2']),
+        ('gotocpc/includes',  ['gotocpc/includes/cpc464.ccz80']),
+        ('gotocpc/includes',  ['gotocpc/includes/cpc6128.ccz80']),
+        ('gotocpc/includes',  ['gotocpc/includes/CPMPlus.ccz80']),
+        ('gotocpc/includes',  ['gotocpc/includes/SpritesAlive.ccz80']),
+        ('gotocpc/includes',  ['gotocpc/includes/sprUtilCPC.ccz80']),
+        ('gotocpc/includes',  ['gotocpc/includes/standard.ccz80'])
+    ],
     install_requires=[
         'click',
         'configparser',

@@ -1,5 +1,5 @@
-recursive-include gotocpc/includes *.ccz80
-recursive-include gotocpc/templates *.*
+include gotocpc/includes *.ccz80
+include gotocpc/templates *.*
 include gotocpc/bin/linux/iDSK
 include gotocpc/bin/linux/martine
 include gotocpc/bin/darwin/iDSK
