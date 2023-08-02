@@ -47,7 +47,7 @@ def img2scr(filename, mode, fileout, dsk):
         else:
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
-        messageError(getFileExt(filename), f'Error executing command: {e.output.decode()}')
+        messageError(f'Error ' + getFileExt(filename) + f' executing command: {e.output.decode()}')
         sys.exit(1)
         
     # Open JSON file
@@ -60,7 +60,8 @@ def img2scr(filename, mode, fileout, dsk):
     
     # Remove single quotes and brackets
     #sw_palette = sw_palette.replace("'", "").strip('[]')
-    messageInfo(getFileExt(filename), f"Convert image file to SCR.\n--- [blue]SW Palette: [white]{sw_palette}\n--- [blue]HW Palette: [white]{hw_palette}\n--- [blue]Out File  : [white]{TMP_FILE.upper()}.SCR")
+    # messageInfo(getFileExt(filename), f"Convert image file to SCR.\n--- [blue]SW Palette: [white]{sw_palette}\n--- [blue]HW Palette: [white]{hw_palette}\n--- [blue]Out File  : [white]{TMP_FILE.upper()}.SCR")
+    messageInfo("[" + getFileExt(filename) + f" ==> {TMP_FILE.upper()}.SCR]:[{sw_palette}]")
 
     if dsk:
         if not os.path.exists("dsk"):

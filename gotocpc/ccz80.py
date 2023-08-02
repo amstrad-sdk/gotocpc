@@ -15,7 +15,8 @@ def compile(file,file_out,address, include):
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         name = getFile(file)
         shutil.move("src/" + name +".bin", file_out+name+".bin")
-        messageInfo(name +".c", f"Compile c file:\n--- [blue]address: [/blue][white]" + address)
+        messageInfo("[" + name +".c ==> " + name + ".bin]:[address]:[" + address + "]")
     except subprocess.CalledProcessError as e:
-        print(consoleMessage(f'{file}: {e.output.decode()}', ConsoleColor.RED))
+        # print(consoleMessage(f'{file}: {e.output.decode()}', ConsoleColor.RED))
+        messageError(getFileExt(file) + f' ==> Error executing command: {e.output.decode()}')
         sys.exit(1)

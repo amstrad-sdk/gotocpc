@@ -8,7 +8,7 @@ global IDSK
 if  sys.platform == "win64":
     DSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/win/iDSK.exe"
 elif sys.platform == "win32":
-    messageError("PLATFORM", f'WIN32 Platform not supported')
+    messageError(f"WIN32 Platform not supported")
     sys.exit(1)
 else:
     IDSK = os.path.dirname(os.path.abspath(__file__)) + "/bin/" + sys.platform + "/iDSK"
@@ -23,28 +23,28 @@ def createDskFile(imagefile):
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         if not os.path.isfile(imagefile):
-            messageError(getFileExt(imagefile), f'Error generating disk image')
+            messageError('Error generating disk image ' + getFileExt(imagefile))
             sys.exit(1)
     except subprocess.CalledProcessError as e:
-        messageError(getFileExt(imagefile), f'Error executing command: {e.output.decode()}')
+        messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
 
 def addBasFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '0']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(getFileExt(file), f"Added file to dsk image.")
+        messageInfo("[" + getFileExt(file) + " ==> " + getFileExt(imagefile) + "]")
     except subprocess.CalledProcessError as e:
-        messageError(getFileExt(imagefile), f'Error executing command: {e.output.decode()}')
+        messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
 
 def addBinaryFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(getFileExt(file), f"Added file to dsk image.")
+        messageInfo("[" + getFileExt(file) + " ==> " + getFileExt(imagefile) + "]")
     except subprocess.CalledProcessError as e:
-        messageError(imagefile, f'Error executing command: {e.output.decode()}')
+        messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
 
 
@@ -52,9 +52,10 @@ def addBinFileDsk(imagefile, file, laddress):
     cmd = [IDSK, f"{imagefile}", '-i', file, '-c', laddress, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo(getFileExt(file), f"Added file to dsk image:\n           address: {laddress} ")
+        # messageInfo(getFileExt(file), f"Added file to dsk image:\n           address: {laddress} ")
+        messageInfo("[" + getFileExt(file) + " ==> " + getFileExt(imagefile) + "]")
     except subprocess.CalledProcessError as e:
-        messageError(imagefile, f'Error executing command: {e.output.decode()}')
+        messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
 
 
@@ -64,5 +65,5 @@ def extractFileDsk(imagefile, file):
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        messageError(imagefile, f'Error executing command: {e.output.decode()}')
+        messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
