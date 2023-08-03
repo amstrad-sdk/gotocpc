@@ -232,9 +232,14 @@ def endCompilation(type,start_time):
 #
 # @param project: show project name in initial compilation
 ##
-def beginCompilation(project):
+def beginCompilation(project,author,model):
+    # console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    # console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    # console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
     console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    console.print("[bold blue] AUTHOR : [/bold blue][bold white]" + author + "[/bold white]")
+    console.print("[bold blue] MODEL  : [/bold blue][bold white]CPC " + str(model) + "[/bold white]")
     console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
 
 ##

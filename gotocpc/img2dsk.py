@@ -2,8 +2,8 @@ from .martine import img2scr, img2spr
 from .rvm import rvm_web
 from .common import imageCompilation, endCompilation
 import os
-
 import time
+
 def img2dsk(cpc,image, mode,rvm):
     # Registrar el tiempo de inicio
     start_time = time.time()  

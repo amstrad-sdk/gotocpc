@@ -23,7 +23,7 @@ def build():
         start_time = time.time()  
         
         # PWD = os.getcwd() + "/"
-        PROJECT_FILE = "project.yaml"
+        PROJECT_FILE = "cpc.yaml"
 
         # check if the project.ini file necessary for the execution of the program exists
         fileExist(PROJECT_FILE)
@@ -64,7 +64,7 @@ def build():
         ##
         # Show begin compilation
         ##  
-        beginCompilation(PROJECT_NAME)
+        beginCompilation(PROJECT_NAME,PROJECT_AUTHOR,PROJECT_RVM_MODEL)
 
         ##
         # Create image DSK
