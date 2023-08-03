@@ -220,9 +220,9 @@ def endCompilation(type,start_time):
     formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
     console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     if type == "OK":
-        console.print("[bold green] BUILD SUCCESSFULLY [/bold green]")
+        console.print("[bold green]BUILD SUCCESSFULLY [/bold green]")
     if type == "ERROR":
-        console.print("[bold red] BUILD FAILURE [/bold red]")
+        console.print("[bold red]BUILD FAILURE [/bold red]")
     console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
     console.print(f"[white]Total time: {execution_time:.2f} seg [/white]")
     console.print(f"[white]Finished at: {formatted_datetime}[/white]")
@@ -235,4 +235,14 @@ def endCompilation(type,start_time):
 def beginCompilation(project):
     console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+
+##
+# compilation image
+#
+# @param project: show project name in initial compilation
+##
+def imageCompilation(image):
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    console.print("[bold blue] IMAGE: [/bold blue][bold white]" + image + "[/bold white]")
     console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
