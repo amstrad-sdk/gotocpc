@@ -33,7 +33,7 @@ def addBasFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '0']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo("[" + getFileExt(file) + " ==> " + getFileExt(imagefile) + "]")
+        messageInfo(getFileExt(file) + "[green] ==> [/green]" + getFileExt(imagefile))
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
@@ -42,7 +42,7 @@ def addBinaryFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        messageInfo("[" + getFileExt(file) + " ==> " + getFileExt(imagefile) + "]")
+        messageInfo(getFileExt(file) + "[green] ==> [/green]" + getFileExt(imagefile))
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)
@@ -53,7 +53,7 @@ def addBinFileDsk(imagefile, file, laddress):
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         # messageInfo(getFileExt(file), f"Added file to dsk image:\n           address: {laddress} ")
-        messageInfo("[" + getFileExt(file) + " ==> " + getFileExt(imagefile) + "]")
+        messageInfo(getFileExt(file) + " [green] ==> [/green] " + getFileExt(imagefile))
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
         sys.exit(1)

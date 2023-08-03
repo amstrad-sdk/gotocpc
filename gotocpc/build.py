@@ -3,8 +3,7 @@ import sys
 import configparser
 from rich import print
 from .common import consoleMessage, ConsoleColor, removeComments, convert2Dos, concatBasFiles, \
-    messageError, messageWarning, messageInfo, endCompilation, beginCompilation, concatFile, fileExist, getFile, \
-    convert2Dos2
+    messageError, messageWarning, messageInfo, endCompilation, beginCompilation, concatFile, fileExist, getFile
 from .project import readProjectIni
 from rich.console import Console
 from rich.text import Text
@@ -15,11 +14,14 @@ from .ccz80 import compile
 import yaml
 import shutil
 from os import remove
+import time
 
 console = Console()
 
 def build():
-    
+        # Registrar el tiempo de inicio
+        start_time = time.time()  
+        
         # PWD = os.getcwd() + "/"
         PROJECT_FILE = "project.yaml"
 
@@ -37,10 +39,10 @@ def build():
         PWD                  = os.getcwd() + "/"
         NUMBER_CONCAT_FILES  = sum(1 for item in data['spec']['files'] if item.get('kind') == 'bas' and item.get('concat') == True)
         COUNT                = 0
-        PATH_DISC            = PWD + "CPC"
-        PATH_SRC             = PWD + "src"
-        PATH_DSK             = PWD + "dsk"
-        PATH_ASSETS          = PWD + "assets"
+        PATH_DISC            = "CPC"
+        PATH_SRC             = "src"
+        PATH_DSK             = "dsk"
+        PATH_ASSETS          = "assets"
         PROJECT_NOT_SECTIONS = ["PROJECT", "CONCATENATE", "RVM"]
         PROJECT_NAME         = data['project']['data'].get('name', 'No project mame')
         PROJECT_AUTHOR       = data['project']['data'].get('author', 'No author mame')
@@ -49,7 +51,7 @@ def build():
         PROJECT_RVM_RUN      = data['project']['rvm'].get('name', 'run"main.bas"')
         PROJECT_CONCAT_OUT   = PATH_DISC + "/" + data['project']['concatenate'].get('out', 'PROJECT.BAS')
         PROJECT_DSK_FILE     = f"{PATH_DSK}/{PROJECT_NAME}.DSK"
-        RVM_WEB              = PWD + "cpc.html"
+        RVM_WEB              = "CPC_RVM.HTML"
 
         ##
         # Check the disc folder
@@ -125,11 +127,15 @@ def build():
                 print("compile fichero")
                 print("Add file bin a DSK")
 
-        rvm_web(PROJECT_RVM_MODEL,PROJECT_DSK_FILE,PROJECT_RVM_RUN,PROJECT_NAME,RVM_WEB)
+        rvm_web(PROJECT_RVM_MODEL,f"dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,RVM_WEB)
 
         ##
         # Show end compilation
         ##  
         endCompilation("OK")
+        end_time = time.time()  # Registrar el tiempo de finalización
+
+        execution_time = end_time - start_time
+        print(f'El script tardó {execution_time:.6f} segundos en ejecutarse.')
 
     

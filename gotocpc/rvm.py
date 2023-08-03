@@ -22,5 +22,4 @@ def rvm_web(cpc, dsk,run, project,file_html):
     with open(file_html, 'w') as file:
         file.write(rendered_template)
 
-    # messageInfo(getFileExt(file_html), f"Create Template HTML CPC {cpc} Machine Retrovirtual Machine.")
-    messageInfo("[" + getFileExt(file_html) + f" ==> Create Template HTML CPC {cpc} Machine Retrovirtual Machine]")
+    messageInfo(getFileExt(file_html) + f"[green] ==> [/green]Create CPC Retro Virtual Machine Web")

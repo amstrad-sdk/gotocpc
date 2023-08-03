@@ -23,7 +23,7 @@ class ConsoleColor:
 # @param message: message to display
 ##
 def messageWarning(message):
-    console.print("[yellow]\[🟡] ==> \[" + message)
+    console.print("[yellow]\[🟡] ==> [white]" + message)
 
 ##
 # Print message eror
@@ -41,7 +41,7 @@ def messageError(message):
 # @param message: message to display
 ##
 def messageInfo(message):
-    console.print("[blue]\[👍] ==> [white]\[" + message)
+    console.print("[green]\[👍] ==> [bold white]" + message)
 
 
 # def checkProjectValue(text, value):
@@ -112,7 +112,7 @@ def removeComments(source, output):
     with open(output, 'w') as file:
         file.writelines(filtered_lines)
     file = getFileExt(source)
-    messageInfo("[" + file +"]:[File Comments Removed]")
+    messageInfo(file +"[green] ==> [/green]File Comments Removed")
 
 
 ##
@@ -121,23 +121,24 @@ def removeComments(source, output):
 # @param source: source filename
 # @param output: output filename
 ##
-def convert2Dos2(source):
-    if not os.path.exists(source):
-        messageError(f"The " + getFileExt(source) +" file does not exist")
-        endCompilation("ERROR")
-        sys.exit(1)
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
+# def convert2Dos2(source):
+#     if not os.path.exists(source):
+#         messageError(f"The " + getFileExt(source) +" file does not exist")
+#         endCompilation("ERROR")
+#         sys.exit(1)
+#     SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
 
-    cmd = ['unix2dos', source]
-    try:
-        output = subprocess.check_output(cmd)
-        # messageInfo(getFileExt(file), f"unix to dos.")
-    except subprocess.CalledProcessError as e:
-        messageError(getFileExt(source) + f' ==> Error executing command: {e.output.decode()}')
-        sys.exit(1)
+#     cmd = ['unix2dos', source]
+#     try:
+#         output = subprocess.check_output(cmd)
+#         messageInfo(getFileExt(file) + f" unix to dos.")
+#     except subprocess.CalledProcessError as e:
+#         messageError(getFileExt(source) + f' ==> Error executing command: {e.output.decode()}')
+#         sys.exit(1)
 
-    files = getFileExt(source)
-    # messageInfo(files, "Convert unix to dos.")
+#     files = getFileExt(source)
+#     messageInfo(files +"[green] ==> [/green]Convert unix to dosdddddd")
+    
 def convert2Dos(source, output):
     if not os.path.exists(source):
         messageError(f"The " + getFileExt(source) +" file does not exist")
@@ -152,7 +153,7 @@ def convert2Dos(source, output):
         file.writelines(dos_lines)
 
     files = getFileExt(source)
-    # messageInfo(files, "Convert unix to dos.")
+    messageInfo(files +"[green] ==> [/green]Convert unix to dos")
 
 ##
 # Concatenate Bas file
@@ -167,7 +168,7 @@ def concatFile(source, output):
         destino_file.write(contenido_origen)
     os.remove(source)
     # messageInfo(getFileExt(source), f"Concatenate in {getFileExt(output)}.")
-    messageInfo("["+ getFileExt(source) + f" ==> {getFileExt(output)}]")
+    messageInfo(getFileExt(source) + f" ==> {getFileExt(output)}")
 
 ##
 # verify file exist
@@ -199,13 +200,13 @@ def concatBasFiles(files, output, folder):
                         contenido = archivo.read()
                         salida.write(contenido)
                     os.remove(folder + nombre_fichero)
-                    messageInfo("["+ nombre_fichero + f" ==> {getFileExt(output)}]")
+                    messageInfo(nombre_fichero + f" ==> {getFileExt(output)}")
                 else:
                     messageError(f"The " + getFileExt(nombre_fichero) +" file does not exist")
                     endCompilation("ERROR")
                     sys.exit(1)
     else:
-        messageWarning("Warning", "Not concat files.")
+        messageWarning("Warning Not concat files.")
 
 ##
 # end compilation
@@ -213,12 +214,12 @@ def concatBasFiles(files, output, folder):
 # @param type: show final compilation values OK or ERROR
 ##
 def endCompilation(type):
-    console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     if type == "OK":
         console.print("[bold green] BUILD SUCCESSFULLY [/bold green]")
     if type == "ERROR":
         console.print("[bold red] BUILD FAILURE [/bold red]")
-    console.print("[bold white]-------------------------------------------------------------- [/bold white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
 
 ##
 # begin compilation
@@ -226,6 +227,6 @@ def endCompilation(type):
 # @param project: show project name in initial compilation
 ##
 def beginCompilation(project):
-    console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
-    console.print("[bold white]-------------------------------------------------------------- [/bold white]\n")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")

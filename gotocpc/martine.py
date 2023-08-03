@@ -61,7 +61,7 @@ def img2scr(filename, mode, fileout, dsk):
     # Remove single quotes and brackets
     #sw_palette = sw_palette.replace("'", "").strip('[]')
     # messageInfo(getFileExt(filename), f"Convert image file to SCR.\n--- [blue]SW Palette: [white]{sw_palette}\n--- [blue]HW Palette: [white]{hw_palette}\n--- [blue]Out File  : [white]{TMP_FILE.upper()}.SCR")
-    messageInfo("[" + getFileExt(filename) + f" ==> {TMP_FILE.upper()}.SCR]:[{sw_palette}]")
+    messageInfo(getFileExt(filename) + f"[green] ==> [/green]{TMP_FILE.upper()}.SCR / PAL: {sw_palette}")
 
     if dsk:
         if not os.path.exists("dsk"):
