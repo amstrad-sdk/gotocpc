@@ -124,8 +124,7 @@ def build():
             ## 
             elif file_data['kind'].upper() == 'SPRITE':
                 fileExist(f"{PATH_ASSETS}/{file_data['name']}")
-                print("compile fichero")
-                print("Add file bin a DSK")
+                img2spr(f"{PATH_ASSETS}/{file_data['name']}",f"{file_data['mode']}",f"{file_data['width']}",f"{file_data['height']}","assets")
 
         rvm_web(PROJECT_RVM_MODEL,f"dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,RVM_WEB)
 
