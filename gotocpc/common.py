@@ -3,8 +3,8 @@ import sys
 from rich.console import Console
 from rich.text import Text
 import subprocess
-
-
+import datetime
+import time
 console = Console()
 
 
@@ -213,14 +213,20 @@ def concatBasFiles(files, output, folder):
 #
 # @param type: show final compilation values OK or ERROR
 ##
-def endCompilation(type):
+def endCompilation(type,start_time):
+    end_time = time.time()  # Registrar el tiempo de finalización
+    execution_time = end_time - start_time
+    current_datetime = datetime.datetime.now()
+    formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
     console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     if type == "OK":
         console.print("[bold green] BUILD SUCCESSFULLY [/bold green]")
     if type == "ERROR":
         console.print("[bold red] BUILD FAILURE [/bold red]")
     console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
-
+    console.print(f"[white]Total time: {execution_time:.2f} seg [/white]")
+    console.print(f"[white]Finished at: {formatted_datetime}[/white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
 ##
 # begin compilation
 #

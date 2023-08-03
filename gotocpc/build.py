@@ -132,10 +132,8 @@ def build():
         ##
         # Show end compilation
         ##  
-        endCompilation("OK")
-        end_time = time.time()  # Registrar el tiempo de finalización
 
-        execution_time = end_time - start_time
-        print(f'El script tardó {execution_time:.6f} segundos en ejecutarse.')
+        endCompilation("OK",start_time)
+
 
     
