@@ -48,7 +48,7 @@ def img2scr(filename, mode, fileout, dsk):
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(filename) + f' executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
         
     # Open JSON file
     with open(TMP_JSON) as f:
@@ -71,6 +71,7 @@ def img2scr(filename, mode, fileout, dsk):
         shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.DSK'), 'dsk/'+ TMP_FILE.upper() + '.DSK')
     # Delete temporary folder
     shutil.rmtree(TMP_FOLDER)
+    return True
 
 ##
 # Convert images to sprites C/ASM
@@ -100,7 +101,7 @@ def img2spr(filename, mode, width, height, out):
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         print(f'Error executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
 
     if not os.path.exists(OBJ_FOLDER):
         os.makedirs(OBJ_FOLDER)
@@ -116,7 +117,7 @@ def img2spr(filename, mode, width, height, out):
     only=0
     copy = False
     with open(TMP_C, 'r') as input_file:
-        with open(OBJ_FOLDER + "/" + ASM_FILE.upper() + ".C", 'a') as output_file:
+        with open(OBJ_FOLDER + "/" + ASM_FILE.upper() + ".C", 'w') as output_file:
             if only == 0:
                 output_file.write("array byte " + ASM_FILE + " = {\n")
                 only = 1
@@ -134,7 +135,7 @@ def img2spr(filename, mode, width, height, out):
     only=0
 
     with open(TMP_OBJ, 'r') as input_file:
-        with open(OBJ_FOLDER + "/" + ASM_FILE.upper() + ".ASM", 'a') as output_file:
+        with open(OBJ_FOLDER + "/" + ASM_FILE.upper() + ".ASM", 'w') as output_file:
             if only == 0:
                 output_file.write(";------ BEGIN SPRITE --------\n")
                 output_file.write(ASM_FILE)
@@ -159,3 +160,4 @@ def img2spr(filename, mode, width, height, out):
     console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]SIZE: [" + width + "x" + height + "]")
     console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]SW PALETTE: {sw_palette}")
     console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]HW PALETTE: {hw_palette}")
+    return True

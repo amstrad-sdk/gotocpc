@@ -24,28 +24,31 @@ def createDskFile(imagefile):
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         if not os.path.isfile(imagefile):
             messageError('Error generating disk image ' + getFileExt(imagefile))
-            sys.exit(1)
+            return False
+        return True
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
 
 def addBasFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '0']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         messageInfo(getFileExt(file) + "[green] ==> [/green]" + getFileExt(imagefile))
+        return True
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
 
 def addBinaryFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-i", file, '-t', '1']
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         messageInfo(getFileExt(file) + "[green] ==> [/green]" + getFileExt(imagefile))
+        return True
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
 
 
 def addBinFileDsk(imagefile, file, laddress):
@@ -54,9 +57,10 @@ def addBinFileDsk(imagefile, file, laddress):
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         # messageInfo(getFileExt(file), f"Added file to dsk image:\n           address: {laddress} ")
         messageInfo(getFileExt(file) + " [green] ==> [/green] " + getFileExt(imagefile))
+        return True
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
 
 
 def extractFileDsk(imagefile, file):
@@ -64,6 +68,7 @@ def extractFileDsk(imagefile, file):
     cmd = [IDSK, imagefile, "-g", file]
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        return True
     except subprocess.CalledProcessError as e:
         messageError(f'Error ' + getFileExt(imagefile) + f' executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False

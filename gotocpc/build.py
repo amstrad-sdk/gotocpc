@@ -69,7 +69,8 @@ def build():
         ##
         # Create image DSK
         ##  
-        createDskFile(PROJECT_DSK_FILE)
+        if not createDskFile(PROJECT_DSK_FILE):
+            endCompilation("ERROR",start_time)
 
         ##
         # Processing of project files
@@ -81,31 +82,31 @@ def build():
             if file_data['kind'].upper() == 'BAS':
                 COUNT = COUNT + 1
                 fileExist(f"{PATH_SRC}/{file_data['name']}")
-                removeComments(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}")
-                convert2Dos(f"{PATH_DISC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}")
+                if not removeComments(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}"): endCompilation("ERROR",start_time)
+                if not convert2Dos(f"{PATH_DISC}/{file_data['name']}", f"{PATH_DISC}/{file_data['name']}"): endCompilation("ERROR",start_time)
                 #convert2Dos2(f"{PATH_DISC}/{file_data['name']}")
                 if file_data['concat'] == True:
-                    concatFile(f"{PATH_DISC}/{file_data['name']}", PROJECT_CONCAT_OUT)
+                    if not concatFile(f"{PATH_DISC}/{file_data['name']}", PROJECT_CONCAT_OUT): endCompilation("ERROR",start_time)
                     if COUNT == NUMBER_CONCAT_FILES:
-                        convert2Dos(PROJECT_CONCAT_OUT, PROJECT_CONCAT_OUT)
-                        addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_DISC}/{file_data['name']}")
+                        if not convert2Dos(PROJECT_CONCAT_OUT, PROJECT_CONCAT_OUT): endCompilation("ERROR",start_time)
+                        if not addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_DISC}/{file_data['name']}") : endCompilation("ERROR",start_time)
                 else:
-                    addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_DISC}/{file_data['name']}")
+                    if not addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_DISC}/{file_data['name']}"): endCompilation("ERROR",start_time)
             ##
             # Processing ascii files
             ## 
             elif file_data['kind'].upper() == 'ASCII':
                 fileExist(f"{PATH_SRC}/{file_data['name']}")
-                addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_SRC}/{file_data['name']}")
+                if not addBasFileDsk(PROJECT_DSK_FILE, f"{PATH_SRC}/{file_data['name']}"): endCompilation("ERROR",start_time)
             ##
             # Processing C files
             ## 
             elif file_data['kind'].upper() == 'C':
                 fileExist(f"{PATH_SRC}/{file_data['name']}")
-                compile(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/", f"{file_data['address']}",
-                        f"{file_data['include']}")
+                if not compile(f"{PATH_SRC}/{file_data['name']}", f"{PATH_DISC}/", f"{file_data['address']}",
+                        f"{file_data['include']}"): endCompilation("ERROR",start_time)
                 
-                addBinaryFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/" + getFile(f"{PATH_DISC}/{file_data['name']}") + ".bin")
+                if not addBinaryFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/" + getFile(f"{PATH_DISC}/{file_data['name']}") + ".bin"): endCompilation("ERROR",start_time)
                 #addBinFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/" + getFile(f"{PATH_DISC}/{file_data['name']}") + ".bin",
                 #              f"{file_data['address']}")
 
@@ -114,9 +115,9 @@ def build():
             ## 
             elif file_data['kind'].upper() == 'IMAGE':
                 fileExist(f"{PATH_ASSETS}/{file_data['name']}")
-                img2scr(f"{PATH_ASSETS}/{file_data['name']}", f"{file_data['mode']}", "assets", "")
+                if not img2scr(f"{PATH_ASSETS}/{file_data['name']}", f"{file_data['mode']}", "assets", ""): endCompilation("ERROR",start_time)
                 NEW_FILE = getFile(f"{PATH_ASSETS}/{file_data['name']}").upper()
-                addBinaryFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/{NEW_FILE}.SCR")
+                if not addBinaryFileDsk(f"{PROJECT_DSK_FILE}", f"{PATH_DISC}/{NEW_FILE}.SCR"): endCompilation("ERROR",start_time)
                 if not file_data['pal']:
                     remove(f"{PATH_DISC}/{NEW_FILE}.PAL")
             ##
@@ -124,7 +125,7 @@ def build():
             ## 
             elif file_data['kind'].upper() == 'SPRITE':
                 fileExist(f"{PATH_ASSETS}/{file_data['name']}")
-                img2spr(f"{PATH_ASSETS}/{file_data['name']}",f"{file_data['mode']}",f"{file_data['width']}",f"{file_data['height']}","assets")
+                if not img2spr(f"{PATH_ASSETS}/{file_data['name']}",f"{file_data['mode']}",f"{file_data['width']}",f"{file_data['height']}","assets"): endCompilation("ERROR",start_time)
 
         rvm_web(PROJECT_RVM_MODEL,f"dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,RVM_WEB)
 

@@ -16,7 +16,8 @@ def compile(file,file_out,address, include):
         name = getFile(file)
         shutil.move("src/" + name +".bin", file_out+name+".bin")
         messageInfo(name +".c[green] ==> [/green]" + name + ".bin [green]==>[/green] address: " + address)
+        return True
     except subprocess.CalledProcessError as e:
         # print(consoleMessage(f'{file}: {e.output.decode()}', ConsoleColor.RED))
         messageError(getFileExt(file) + f' ==> Error executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False

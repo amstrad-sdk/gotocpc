@@ -32,7 +32,7 @@ def messageWarning(message):
 # @param message: message to display
 ##
 def messageError(message):
-    console.print("[bold red]\[💥] ==> " + message)
+    console.print("[bold red]\[💥] ==> [bold white]" + message)
 
 ##
 # Print message info
@@ -101,8 +101,7 @@ def removeComments(source, output):
     global file
     if not os.path.exists(source):
         messageError(f"The " + getFileExt(source) +" file does not exist")
-        endCompilation("ERROR")
-        sys.exit(1)
+        return False
 
     with open(source, 'r') as file:
         lines = file.readlines()
@@ -113,6 +112,7 @@ def removeComments(source, output):
         file.writelines(filtered_lines)
     file = getFileExt(source)
     messageInfo(file +"[green] ==> [/green]File Comments Removed")
+    return True
 
 
 ##
@@ -142,8 +142,7 @@ def removeComments(source, output):
 def convert2Dos(source, output):
     if not os.path.exists(source):
         messageError(f"The " + getFileExt(source) +" file does not exist")
-        endCompilation("ERROR")
-        sys.exit(1)
+        return False
     with open(source, 'r') as file:
         unix_lines = file.readlines()
 
@@ -154,6 +153,7 @@ def convert2Dos(source, output):
 
     files = getFileExt(source)
     messageInfo(files +"[green] ==> [/green]Convert unix to dos")
+    return True
 
 ##
 # Concatenate Bas file
@@ -169,6 +169,7 @@ def concatFile(source, output):
     os.remove(source)
     # messageInfo(getFileExt(source), f"Concatenate in {getFileExt(output)}.")
     messageInfo(getFileExt(source) + f" ==> {getFileExt(output)}")
+    return True
 
 ##
 # verify file exist
@@ -203,10 +204,11 @@ def concatBasFiles(files, output, folder):
                     messageInfo(nombre_fichero + f" ==> {getFileExt(output)}")
                 else:
                     messageError(f"The " + getFileExt(nombre_fichero) +" file does not exist")
-                    endCompilation("ERROR")
-                    sys.exit(1)
+                    return False
     else:
         messageWarning("Warning Not concat files.")
+        return True
+    return True
 
 ##
 # end compilation

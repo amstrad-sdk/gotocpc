@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "SPRITES.C": "cpp"
+        "SPRITES.C": "cpp",
+        "SCREEN.C": "cpp"
     }
 }

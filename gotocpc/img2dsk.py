@@ -1,13 +1,20 @@
 from .martine import img2scr, img2spr
 from .rvm import rvm_web
-from .common import imageCompilation, endCompilation
+from .common import imageCompilation, endCompilation, fileExist, messageError, messageInfo, messageWarning
 import os
 import time
+import sys
 
 def img2dsk(cpc,image, mode,rvm):
     # Registrar el tiempo de inicio
-    start_time = time.time()  
+    start_time = time.time()
+
     imageCompilation(image)
+    if not os.path.isfile(image):
+        messageError(f"The " + image +" file does not exist")
+        endCompilation("ERROR",start_time)
+        sys.exit(1)
+        
     img2scr(image, mode,"dsk/image", True)
     img = os.path.basename(os.path.splitext(image)[0]).upper()
     DSK_FILE = img + ".DSK"
