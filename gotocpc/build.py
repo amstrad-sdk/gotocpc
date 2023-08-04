@@ -140,7 +140,7 @@ def build():
             if not os.path.isfile(PROJECT_RVM_DESKTOP):
                 messageError(PROJECT_RVM_DESKTOP +"[red] ==> FILE DOES NOT EXIST")
                 endCompilation("ERROR",start_time)
-            rvm_desktop(PROJECT_RVM_MODEL,f"dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,PROJECT_RVM_DESKTOP)
+            if not rvm_desktop(PROJECT_RVM_MODEL,f"dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,PROJECT_RVM_DESKTOP):endCompilation("ERROR",start_time)
 
         ##
         # Show end compilation

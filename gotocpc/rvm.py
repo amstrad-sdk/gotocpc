@@ -40,5 +40,13 @@ def rvm_desktop(cpc, dsk,run, project,rvm_path):
     # rendered_template = template.render(context)
     # with open(file_html, 'w') as file:
     #     file.write(rendered_template)
+    FNULL = open(os.devnull, 'w')
+    try:
+        # Variables for platform
+        retcode = subprocess.Popen([rvm_path,"-i", dsk,"-b=cpc"+cpc,"-c="+run], stdout=FNULL, stderr=subprocess.STDOUT)
+        messageInfo(f"Retro Virtual Machine [green]==> [/green]Launch")
+        return True
+    except:
+        return False
         
-    messageInfo(f"Retro Virtual Machine [green]==> [/green]Launch")
+    
