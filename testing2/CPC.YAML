@@ -5,7 +5,7 @@ project:
     name: testing2
     author: david
   rvm:
-    system: desktop
+    system: web
     model: 6128
     run: run"MAIN.BAS"
     rvm_path: "/pepe/juan"
