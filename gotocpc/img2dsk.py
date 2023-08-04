@@ -26,7 +26,7 @@ def img2dsk(cpc,image, mode,rvm):
         if cpc != "6128":
             cpc = "6128"
             
-        rvm_web(cpc,f"dsk/{DSK_FILE}",RUN,image,"CPC_RVM.HTML")
+        rvm_web(cpc,f"dsk/{DSK_FILE}",RUN,image,"RVM.HTML")
     else:
         print("RVM DESKTOP")
     

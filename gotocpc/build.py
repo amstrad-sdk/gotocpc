@@ -53,7 +53,7 @@ def build():
         PROJECT_RVM_RUN      = data['project']['rvm'].get('name')
         PROJECT_CONCAT_OUT   = PATH_DISC + "/" + data['project']['concatenate'].get('out', 'PROJECT.BAS')
         PROJECT_DSK_FILE     = f"{PATH_DSK}/{PROJECT_NAME}.DSK"
-        RVM_WEB              = "CPC_RVM.HTML"
+        RVM_WEB              = "RVM.HTML"
 
         ##
         # Check the disc folder
