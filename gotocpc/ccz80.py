@@ -18,6 +18,5 @@ def compile(file,file_out,address, include):
         messageInfo(name +".c[green] ==> [/green]" + name + ".bin [green]==>[/green] address: " + address)
         return True
     except subprocess.CalledProcessError as e:
-        # print(consoleMessage(f'{file}: {e.output.decode()}', ConsoleColor.RED))
         messageError(getFileExt(file) + f' ==> Error executing command: {e.output.decode()}')
         return False

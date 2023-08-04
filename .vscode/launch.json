@@ -5,15 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "GOTOCPC",
+            "name": "BUILD",
             "type": "python",
             "request": "launch",
             "module": "gotocpc",
-            "cwd": "${workspaceFolder}/testing",
+            "cwd": "${workspaceFolder}/testing2",
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",
-            }
+            },
+            "args": ["--build"] 
+        },
+        {
+            "name": "CREATE PROJECT",
+            "type": "python",
+            "request": "launch",
+            "module": "gotocpc",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+            },
+            "args": ["--project", "testing2"] 
         },
         {
             "name": "FILE",
@@ -25,7 +38,8 @@
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",
                 "SDK4BASIC_PATH": "${workspaceFolder}/software",
-            }
+            },
+            "args": ["arg1_value", "arg2_value"] 
         }
     ]
 }

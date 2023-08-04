@@ -59,11 +59,9 @@ def img2scr(filename, mode, fileout, dsk):
     hw_palette = str(data['hardwarepalette'])
     
     # Remove single quotes and brackets
-    #sw_palette = sw_palette.replace("'", "").strip('[]')
-    # messageInfo(getFileExt(filename), f"Convert image file to SCR.\n--- [blue]SW Palette: [white]{sw_palette}\n--- [blue]HW Palette: [white]{hw_palette}\n--- [blue]Out File  : [white]{TMP_FILE.upper()}.SCR")
     messageInfo(getFileExt(filename) + f"[green] ==> [/green]{TMP_FILE.upper()}.SCR")
-    console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]SW PALETTE: {sw_palette}")
-    console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]HW PALETTE: {hw_palette}")
+    console.print("         [bold white]" + TMP_FILE.upper() + '.SCR' + f"[green] ==> [/green]SW PALETTE: {sw_palette}")
+    console.print("         [bold white]" + TMP_FILE.upper() + '.SCR' + f"[green] ==> [/green]HW PALETTE: {hw_palette}")
 
     if dsk:
         if not os.path.exists("dsk"):

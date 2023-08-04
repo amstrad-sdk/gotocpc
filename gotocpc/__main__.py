@@ -1,6 +1,6 @@
 import argparse
 from .build import build
-from .create import create
+from .create import create_project
 from .img2dsk import img2dsk
 
 def main():
@@ -21,7 +21,7 @@ def main():
     if args.build:
         build()
     elif args.project:
-        create(args.project)
+        create_project(args.project)
     else:
         handle_image_mode(args, parser)
 

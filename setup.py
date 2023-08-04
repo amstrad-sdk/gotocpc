@@ -32,7 +32,9 @@ setup(
         'rich',
         'PyYAML',
         'jinja2',
-        'emoji'
+        'emoji',
+        'jsonschema',
+        'python-dotenv'
     ],
     python_requires='>=3.6',
     classifiers=[
@@ -49,7 +51,8 @@ setup(
     entry_points={
         'console_scripts': [
             'gotocpc=gotocpc.__main__:main',
-            'go2cpc=gotocpc.__main__:main'
+            'go2cpc=gotocpc.__main__:main',
+            'cpc=gotocpc.__main__:main'
         ]
     }
 )

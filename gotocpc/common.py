@@ -178,8 +178,9 @@ def concatFile(source, output):
 ##
 def fileExist(source):
     if not os.path.isfile(source):
-        messageError(f"The " + getFileExt(source) +" file does not exist")
-        sys.exit(1)
+        messageError(getFileExt(source) +"[red] ==> FILE DOES NOT EXIST")
+        return False
+    return True
 
 ##
 # Concatenate Bas files
@@ -229,6 +230,8 @@ def endCompilation(type,start_time):
     console.print(f"[white]Total time: {execution_time:.2f} seg [/white]")
     console.print(f"[white]Finished at: {formatted_datetime}[/white]")
     console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    if type == "ERROR":sys.exit(1)
+    if type == "OK":sys.exit(0)
 ##
 # begin compilation
 #
@@ -247,9 +250,34 @@ def beginCompilation(project,author,model):
 ##
 # compilation image
 #
-# @param project: show project name in initial compilation
+# @param project: image name
 ##
 def imageCompilation(image):
     console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     console.print("[bold blue] IMAGE: [/bold blue][bold white]" + image + "[/bold white]")
     console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+
+##
+# create project
+#
+# @param project: image name
+##
+def createProject(project):
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    console.print("[bold blue]CREATE PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+
+##
+# end create project
+#
+# @param type: show final compilation values OK or ERROR
+##
+def endCreteProject(type):
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    if type == "OK":
+        console.print("[bold green]CREATE PROJECT SUCCESSFULLY [/bold green]")
+    if type == "ERROR":
+        console.print("[bold red]CREATE PROJECT FAILURE [/bold red]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    if type == "ERROR":sys.exit(1)
+    if type == "OK":sys.exit(0)

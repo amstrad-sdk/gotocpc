@@ -26,7 +26,7 @@ spec:
   - kind: c
     name: main.c
     address: 40960
-    include: 
+    include: ""
   - kind: image
     name: screen.png
     mode: 0

@@ -18,6 +18,9 @@ else:
 
 def createDskFile(imagefile):
 
+    if os.path.isfile(imagefile):
+        os.remove(imagefile)
+
     cmd = [IDSK, imagefile, "-n"]
 
     try:

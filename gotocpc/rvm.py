@@ -23,3 +23,22 @@ def rvm_web(cpc, dsk,run, project,file_html):
         file.write(rendered_template)
 
     messageInfo(getFileExt(file_html) + f"[green] ==> [/green]Create CPC Retro Virtual Machine Web")
+
+
+def rvm_desktop(cpc, dsk,run, project,rvm_path):
+    # APP_PATH = os.path.dirname(os.path.abspath(__file__))
+    # context = {
+    #     'cpc': cpc,
+    #     'dsk': dsk,
+    #     'run': run,
+    #     'project': project
+    # }
+
+    # with open(APP_PATH +"/templates/cpc.j2", 'r') as file:
+    #     template_string = file.read()
+    # template = Template(template_string)
+    # rendered_template = template.render(context)
+    # with open(file_html, 'w') as file:
+    #     file.write(rendered_template)
+        
+    messageInfo(f"Retro Virtual Machine [green]==> [/green]Launch")
