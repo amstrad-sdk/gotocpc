@@ -1,9 +1,12 @@
 from .martine import img2scr, img2spr
-from .rvm import rvm_web
+from .rvm import rvm_web,rvm_desktop
 from .common import imageCompilation, endCompilation, fileExist, messageError, messageInfo, messageWarning
 import os
 import time
 import sys
+import yaml
+
+
 
 def img2dsk(cpc,image, mode,rvm):
     # Registrar el tiempo de inicio
@@ -28,6 +31,10 @@ def img2dsk(cpc,image, mode,rvm):
             
         rvm_web(cpc,f"dsk/{DSK_FILE}",RUN,image,"RVM.HTML")
     else:
-        print("RVM DESKTOP")
+        PROJECT_FILE = "CPC.YAML"
+        with open(PROJECT_FILE, 'r') as file:
+            data = yaml.safe_load(file)
+        PROJECT_RVM_DESKTOP  = data['project']['rvm'].get('rvm_path')
+        rvm_desktop(cpc,f"dsk/{DSK_FILE}",RUN,image,PROJECT_RVM_DESKTOP)
     
     endCompilation("OK",start_time)        

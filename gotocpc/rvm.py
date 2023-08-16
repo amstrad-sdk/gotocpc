@@ -29,7 +29,6 @@ def rvm_web(cpc, dsk,run, project,file_html):
 def rvm_desktop(cpc, dsk,run, project,rvm_path):
     FNULL = open(os.devnull, 'w')
     try:
-        # Variables for platform
         retcode = subprocess.Popen([rvm_path,"-i", dsk,"-b=cpc"+str(cpc),"-c="+run + "\n"], stdout=FNULL, stderr=subprocess.STDOUT)
         messageInfo(f"Retro Virtual Machine [green]==> [/green]Launch")
         return True
