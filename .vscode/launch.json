@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "module": "gotocpc",
-            "cwd": "${workspaceFolder}/testing2",
+            "cwd": "${workspaceFolder}/test/testing2",
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",

@@ -5,10 +5,10 @@ project:
     name: testing2
     author: david
   rvm:
-    system: web
+    system: desktop
     model: 6128
     run: run"MAIN.BAS"
-    rvm_path: "/pepe/juan"
+    rvm_path: "/home/destroyer/APLICACIONES/RetroVirtualMachine"
   concatenate:
     out: CONCAT.BAS
   m4board:

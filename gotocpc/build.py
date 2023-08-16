@@ -50,7 +50,7 @@ def build():
         PROJECT_RVM_SYSTEM   = data['project']['rvm'].get('system')
         PROJECT_RVM_DESKTOP  = data['project']['rvm'].get('rvm_path')
         PROJECT_RVM_MODEL    = data['project']['rvm'].get('model')
-        PROJECT_RVM_RUN      = data['project']['rvm'].get('name')
+        PROJECT_RVM_RUN      = data['project']['rvm'].get('run')
         PROJECT_CONCAT_OUT   = PATH_DISC + "/" + data['project']['concatenate'].get('out', 'PROJECT.BAS')
         PROJECT_DSK_FILE     = f"{PATH_DSK}/{PROJECT_NAME}.DSK"
         RVM_WEB              = "RVM.HTML"
@@ -140,7 +140,7 @@ def build():
             if not os.path.isfile(PROJECT_RVM_DESKTOP):
                 messageError(PROJECT_RVM_DESKTOP +"[red] ==> FILE DOES NOT EXIST")
                 endCompilation("ERROR",start_time)
-            if not rvm_desktop(PROJECT_RVM_MODEL,f"dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,PROJECT_RVM_DESKTOP):endCompilation("ERROR",start_time)
+            if not rvm_desktop(PROJECT_RVM_MODEL,f"{PWD}/dsk/{PROJECT_NAME}.DSK",PROJECT_RVM_RUN,PROJECT_NAME,PROJECT_RVM_DESKTOP):endCompilation("ERROR",start_time)
 
         ##
         # Show end compilation
