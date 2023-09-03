@@ -24,7 +24,7 @@ def build():
         start_time = time.time()  
         
         # PWD = os.getcwd() + "/"
-        PROJECT_FILE = "CPC.YAML"
+        PROJECT_FILE = "cfg/CPC.YAML"
 
         # check if the project.ini file necessary for the execution of the program exists
         fileExist(PROJECT_FILE)

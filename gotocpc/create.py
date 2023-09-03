@@ -18,7 +18,7 @@ def create_project(project):
     
     
     folder_project = f"{project}"
-    subfolders = ["assets","out","dsk","src"]
+    subfolders = ["assets","out","dsk","src","cfg"]
     current_datetime = datetime.datetime.now()
     
     createProject(f"{project}")
@@ -53,10 +53,10 @@ def cretateTemplateProject(project_folder,name, user):
         template_string = file.read()
     template = Template(template_string)
     rendered_template = template.render(context)
-    with open(project_folder + "/CPC.YAML", 'w') as file:
+    with open(project_folder + "/cfg/CPC.YAML", 'w') as file:
         file.write(rendered_template)
 
-    messageInfo(f"{project_folder}/CPC.YAML")
+    messageInfo(f"{project_folder}/cfg/CPC.YAML")
 
 def cretateTemplateBas(project_folder,name, user, fecha):
     APP_PATH = os.path.dirname(os.path.abspath(__file__))

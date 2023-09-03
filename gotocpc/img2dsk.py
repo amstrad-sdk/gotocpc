@@ -31,7 +31,7 @@ def img2dsk(cpc,image, mode,rvm):
             
         rvm_web(cpc,f"dsk/{DSK_FILE}",RUN,image,"RVM.HTML")
     else:
-        PROJECT_FILE = "CPC.YAML"
+        PROJECT_FILE = "cfg/CPC.YAML"
         with open(PROJECT_FILE, 'r') as file:
             data = yaml.safe_load(file)
         PROJECT_RVM_DESKTOP  = data['project']['rvm'].get('rvm_path')

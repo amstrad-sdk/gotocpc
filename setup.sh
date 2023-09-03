@@ -37,4 +37,9 @@ if [ -f "$HOME/.zshrc" ]; then
   add_to_path "$HOME/.zshrc" "$TOOLS_DIR"
 fi
 
+
+# INSTALAR REQUERIMENTS.TXT
+# COMPILAR GOTOCPC
+# INSTALAR GOTOCPC
+
 echo "Script completado"
