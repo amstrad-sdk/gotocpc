@@ -6,8 +6,8 @@ import shutil
 import os
 import sys
 from .common import consoleMessage, ConsoleColor, getFileExt, messageError, messageInfo,messageWarning
-
-
+from rich.console import Console
+console = Console()
 global MARTINE
 
 if sys.platform != "win32" or sys.platform != "win64":
@@ -47,8 +47,8 @@ def img2scr(filename, mode, fileout, dsk):
         else:
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
-        messageError(getFileExt(filename), f'Error executing command: {e.output.decode()}')
-        sys.exit(1)
+        messageError(f'Error ' + getFileExt(filename) + f' executing command: {e.output.decode()}')
+        return False
         
     # Open JSON file
     with open(TMP_JSON) as f:
@@ -59,8 +59,9 @@ def img2scr(filename, mode, fileout, dsk):
     hw_palette = str(data['hardwarepalette'])
     
     # Remove single quotes and brackets
-    #sw_palette = sw_palette.replace("'", "").strip('[]')
-    messageInfo(getFileExt(filename), f"Convert image file to SCR.\n--- [blue]SW Palette: [white]{sw_palette}\n--- [blue]HW Palette: [white]{hw_palette}\n--- [blue]Out File  : [white]{TMP_FILE.upper()}.SCR")
+    messageInfo(getFileExt(filename) + f"[green] ==> [/green]{TMP_FILE.upper()}.SCR")
+    console.print("         [bold white]" + TMP_FILE.upper() + '.SCR' + f"[green] ==> [/green]SW PALETTE: {sw_palette}")
+    console.print("         [bold white]" + TMP_FILE.upper() + '.SCR' + f"[green] ==> [/green]HW PALETTE: {hw_palette}")
 
     if dsk:
         if not os.path.exists("dsk"):
@@ -68,6 +69,7 @@ def img2scr(filename, mode, fileout, dsk):
         shutil.copy2(os.path.join(TMP_FOLDER, TMP_FILE.upper() + '.DSK'), 'dsk/'+ TMP_FILE.upper() + '.DSK')
     # Delete temporary folder
     shutil.rmtree(TMP_FOLDER)
+    return True
 
 ##
 # Convert images to sprites C/ASM
@@ -97,15 +99,23 @@ def img2spr(filename, mode, width, height, out):
             subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         print(f'Error executing command: {e.output.decode()}')
-        sys.exit(1)
+        return False
 
     if not os.path.exists(OBJ_FOLDER):
         os.makedirs(OBJ_FOLDER)
     
+    # Open JSON file
+    with open(TMP_JSON) as f:
+        data = json.load(f)
+
+    # Get value of 'palette' key and convert to string
+    sw_palette = str(data['palette'])
+    hw_palette = str(data['hardwarepalette'])
+    
     only=0
     copy = False
     with open(TMP_C, 'r') as input_file:
-        with open(OBJ_FOLDER + "/SPRITES.C", 'a') as output_file:
+        with open(OBJ_FOLDER + "/" + ASM_FILE.upper() + ".C", 'w') as output_file:
             if only == 0:
                 output_file.write("array byte " + ASM_FILE + " = {\n")
                 only = 1
@@ -123,7 +133,7 @@ def img2spr(filename, mode, width, height, out):
     only=0
 
     with open(TMP_OBJ, 'r') as input_file:
-        with open(OBJ_FOLDER + "/SPRITES.ASM", 'a') as output_file:
+        with open(OBJ_FOLDER + "/" + ASM_FILE.upper() + ".ASM", 'w') as output_file:
             if only == 0:
                 output_file.write(";------ BEGIN SPRITE --------\n")
                 output_file.write(ASM_FILE)
@@ -143,3 +153,9 @@ def img2spr(filename, mode, width, height, out):
 
     # Delete temporary folder
     shutil.rmtree(TMP_FOLDER)
+    messageInfo(getFileExt(filename) + f"[green] ==> [/green]{ASM_FILE.upper()}.ASM")
+    console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]{ASM_FILE.upper()}.C")
+    console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]SIZE: [" + width + "x" + height + "]")
+    console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]SW PALETTE: {sw_palette}")
+    console.print("         [bold white]" + getFileExt(filename) + f"[green] ==> [/green]HW PALETTE: {hw_palette}")
+    return True

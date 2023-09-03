@@ -1,0 +1,25 @@
+Version: v1
+kind: cpc
+project:
+  data:
+    name: testing2
+    author: david
+  rvm:
+    system: desktop
+    model: 6128
+    run: run"MAIN.BAS"
+    rvm_path: "/home/destroyer/APLICACIONES/RetroVirtualMachine"
+  concatenate:
+    out: CONCAT.BAS
+  m4board:
+    publish: False
+    folder: ""
+spec:
+  files:
+  - kind: bas
+    name: MAIN.BAS
+    concat: False
+  # - kind: image
+  #   name: screen.png
+  #   mode: 0
+  #   pal: False

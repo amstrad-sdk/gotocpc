@@ -26,14 +26,14 @@ spec:
   - kind: c
     name: main.c
     address: 40960
-    include: 
+    include: ""
   - kind: image
     name: screen.png
     mode: 0
     pal: False
-  # - kind: sprite
-  #   name: screen.png
-  #   width: 16
-  #   height: 16
-  #   mode: 0
+  - kind: sprite
+    name: screen.png
+    width: 16
+    height: 16
+    mode: 0
 

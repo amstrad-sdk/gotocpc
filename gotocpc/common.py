@@ -3,8 +3,8 @@ import sys
 from rich.console import Console
 from rich.text import Text
 import subprocess
-
-
+import datetime
+import time
 console = Console()
 
 
@@ -22,9 +22,8 @@ class ConsoleColor:
 # @param file: File to which the message refers
 # @param message: message to display
 ##
-def messageWarning(file, message):
-    console.print(
-        "[bold yellow]\[" + str(file) + "] " + message + "[/bold yellow]")
+def messageWarning(message):
+    console.print("[yellow]\[🟡] ==> [white]" + message)
 
 ##
 # Print message eror
@@ -32,9 +31,8 @@ def messageWarning(file, message):
 # @param file: File to which the message refers
 # @param message: message to display
 ##
-def messageError(file, message):
-    console.print(
-        "[bold blue]\[❌][" + str(file) + "][/bold blue][bold red] " + message + "[/bold red]")
+def messageError(message):
+    console.print("[bold red]\[💥] ==> [bold white]" + message)
 
 ##
 # Print message info
@@ -42,9 +40,8 @@ def messageError(file, message):
 # @param file: File to which the message refers
 # @param message: message to display
 ##
-def messageInfo(file, message):
-    console.print(
-        "[blue]\[✅]\[" + str(file) + "][/blue][white] " + message + "[/white]")
+def messageInfo(message):
+    console.print("[green]\[👍] ==> [bold white]" + message)
 
 
 # def checkProjectValue(text, value):
@@ -103,9 +100,8 @@ def getFileExtension(source):
 def removeComments(source, output):
     global file
     if not os.path.exists(source):
-        messageError(getFileExt(source), "The file does not exist.")
-        endCompilation("ERROR")
-        sys.exit(1)
+        messageError(f"The " + getFileExt(source) +" file does not exist")
+        return False
 
     with open(source, 'r') as file:
         lines = file.readlines()
@@ -115,7 +111,8 @@ def removeComments(source, output):
     with open(output, 'w') as file:
         file.writelines(filtered_lines)
     file = getFileExt(source)
-    messageInfo(file, "File Comments Removed.")
+    messageInfo(file +"[green] ==> [/green]File Comments Removed")
+    return True
 
 
 ##
@@ -124,28 +121,28 @@ def removeComments(source, output):
 # @param source: source filename
 # @param output: output filename
 ##
-def convert2Dos2(source):
-    if not os.path.exists(source):
-        messageError(getFileExt(source), "The file does not exist.")
-        endCompilation("ERROR")
-        sys.exit(1)
-    SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
+# def convert2Dos2(source):
+#     if not os.path.exists(source):
+#         messageError(f"The " + getFileExt(source) +" file does not exist")
+#         endCompilation("ERROR")
+#         sys.exit(1)
+#     SDK4BASIC_PATH = os.environ.get('SDK4BASIC_PATH')
 
-    cmd = ['unix2dos', source]
-    try:
-        output = subprocess.check_output(cmd)
-        messageInfo(getFileExt(file), f"unix to dos.")
-    except subprocess.CalledProcessError as e:
-        messageError(getFileExt(source), f'Error executing command: {e.output.decode()}')
-        sys.exit(1)
+#     cmd = ['unix2dos', source]
+#     try:
+#         output = subprocess.check_output(cmd)
+#         messageInfo(getFileExt(file) + f" unix to dos.")
+#     except subprocess.CalledProcessError as e:
+#         messageError(getFileExt(source) + f' ==> Error executing command: {e.output.decode()}')
+#         sys.exit(1)
 
-    files = getFileExt(source)
-    messageInfo(files, "Convert unix to dos.")
+#     files = getFileExt(source)
+#     messageInfo(files +"[green] ==> [/green]Convert unix to dosdddddd")
+    
 def convert2Dos(source, output):
     if not os.path.exists(source):
-        messageError(getFileExt(source), "The file does not exist.")
-        endCompilation("ERROR")
-        sys.exit(1)
+        messageError(f"The " + getFileExt(source) +" file does not exist")
+        return False
     with open(source, 'r') as file:
         unix_lines = file.readlines()
 
@@ -155,7 +152,8 @@ def convert2Dos(source, output):
         file.writelines(dos_lines)
 
     files = getFileExt(source)
-    messageInfo(files, "Convert unix to dos.")
+    messageInfo(files +"[green] ==> [/green]Convert unix to dos")
+    return True
 
 ##
 # Concatenate Bas file
@@ -169,7 +167,9 @@ def concatFile(source, output):
     with open(output, 'a') as destino_file:
         destino_file.write(contenido_origen)
     os.remove(source)
-    messageInfo(getFileExt(source), f"Concatenate in {getFileExt(output)}.")
+    # messageInfo(getFileExt(source), f"Concatenate in {getFileExt(output)}.")
+    messageInfo(getFileExt(source) + f" ==> {getFileExt(output)}")
+    return True
 
 ##
 # verify file exist
@@ -178,8 +178,9 @@ def concatFile(source, output):
 ##
 def fileExist(source):
     if not os.path.isfile(source):
-        messageError(getFileExt(source), "File does not exist.")
-        sys.exit(1)
+        messageError(getFileExt(source) +"[red] ==> FILE DOES NOT EXIST")
+        return False
+    return True
 
 ##
 # Concatenate Bas files
@@ -201,33 +202,82 @@ def concatBasFiles(files, output, folder):
                         contenido = archivo.read()
                         salida.write(contenido)
                     os.remove(folder + nombre_fichero)
-                    messageInfo(nombre_fichero, f"Concatenate in {output}.")
+                    messageInfo(nombre_fichero + f" ==> {getFileExt(output)}")
                 else:
-                    messageError(nombre_fichero, "The file does not exist.")
-                    endCompilation("ERROR")
-                    sys.exit(1)
+                    messageError(f"The " + getFileExt(nombre_fichero) +" file does not exist")
+                    return False
     else:
-        messageWarning("Warning", "Not concat files.")
+        messageWarning("Warning Not concat files.")
+        return True
+    return True
 
 ##
 # end compilation
 #
 # @param type: show final compilation values OK or ERROR
 ##
-def endCompilation(type):
-    console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
+def endCompilation(type,start_time):
+    end_time = time.time()  # Registrar el tiempo de finalización
+    execution_time = end_time - start_time
+    current_datetime = datetime.datetime.now()
+    formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     if type == "OK":
-        console.print("[bold green] BUILD SUCCESSFULLY [/bold green]")
+        console.print("[bold green]BUILD SUCCESSFULLY [/bold green]")
     if type == "ERROR":
-        console.print("[bold red] BUILD FAILURE [/bold red]")
-    console.print("[bold white]-------------------------------------------------------------- [/bold white]")
-
+        console.print("[bold red]BUILD FAILURE [/bold red]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    console.print(f"[white]Total time: {execution_time:.2f} seg [/white]")
+    console.print(f"[white]Finished at: {formatted_datetime}[/white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    if type == "ERROR":sys.exit(1)
+    if type == "OK":sys.exit(0)
 ##
 # begin compilation
 #
 # @param project: show project name in initial compilation
 ##
-def beginCompilation(project):
-    console.print("\n[bold white]-------------------------------------------------------------- [/bold white]")
+def beginCompilation(project,author,model):
+    # console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    # console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    # console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
     console.print("[bold blue] PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
-    console.print("[bold white]-------------------------------------------------------------- [/bold white]\n")
+    console.print("[bold blue] AUTHOR : [/bold blue][bold white]" + author + "[/bold white]")
+    console.print("[bold blue] MODEL  : [/bold blue][bold white]CPC " + str(model) + "[/bold white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+
+##
+# compilation image
+#
+# @param project: image name
+##
+def imageCompilation(image):
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    console.print("[bold blue] IMAGE: [/bold blue][bold white]" + image + "[/bold white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+
+##
+# create project
+#
+# @param project: image name
+##
+def createProject(project):
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    console.print("[bold blue]CREATE PROJECT: [/bold blue][bold white]" + project + "[/bold white]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]\n")
+
+##
+# end create project
+#
+# @param type: show final compilation values OK or ERROR
+##
+def endCreteProject(type):
+    console.print("\n[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    if type == "OK":
+        console.print("[bold green]CREATE PROJECT SUCCESSFULLY [/bold green]")
+    if type == "ERROR":
+        console.print("[bold red]CREATE PROJECT FAILURE [/bold red]")
+    console.print("[bold white]------------------------------------------------------------------------------------- [/bold white]")
+    if type == "ERROR":sys.exit(1)
+    if type == "OK":sys.exit(0)

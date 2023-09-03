@@ -1,0 +1,2 @@
+1 - Poner el concatenado en cada uno de los ficheros bas. De esa forma puedes concatenar en ficheros diferentes
+2 - Cambiar la forma de leer el "testing" del codigo. En el yaml poner testing y a elegir entre rvm-web, rvm-desktop, m4-board, winape.

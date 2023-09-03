@@ -16,8 +16,9 @@ setup(
         ('gotocpc/bin/linux', ['gotocpc/bin/linux/iDSK', 'gotocpc/bin/linux/martine']),
         ('gotocpc/bin/darwin',['gotocpc/bin/darwin/iDSK', 'gotocpc/bin/darwin/martine']),
         ('gotocpc/bin/win',   ['gotocpc/bin/win/iDSK.exe', 'gotocpc/bin/win/martine.exe']),
-        ('gotocpc/bin/win',   ['gotocpc/bin/win/ccz80.exe', 'gotocpc/bin/win/cygwin1.dll']),
+        ('gotocpc/bin',       ['gotocpc/bin/ccz80.exe', 'gotocpc/bin/ccz80.exe']),
         ('gotocpc/bin/win',   ['gotocpc/bin/win/cyggcc_s-1.dll']),
+        ('gotocpc/bin/win',   ['gotocpc/bin/win/cygwin1.dll']),
         ('gotocpc/templates', ['gotocpc/templates/cpc.j2']),
         ('gotocpc/includes',  ['gotocpc/includes/cpc464.ccz80']),
         ('gotocpc/includes',  ['gotocpc/includes/cpc6128.ccz80']),
@@ -32,7 +33,9 @@ setup(
         'rich',
         'PyYAML',
         'jinja2',
-        'emoji'
+        'emoji',
+        'jsonschema',
+        'python-dotenv'
     ],
     python_requires='>=3.6',
     classifiers=[
@@ -49,7 +52,8 @@ setup(
     entry_points={
         'console_scripts': [
             'gotocpc=gotocpc.__main__:main',
-            'go2cpc=gotocpc.__main__:main'
+            'go2cpc=gotocpc.__main__:main',
+            'cpc=gotocpc.__main__:main'
         ]
     }
 )
