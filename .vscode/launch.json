@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "BUILD",
+            "type": "python",
+            "request": "launch",
+            "module": "gotocpc",
+            "cwd": "${workspaceFolder}/test/testing2",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+            },
+            "args": ["--build"] 
+        },
+        {
+            "name": "CREATE PROJECT",
+            "type": "python",
+            "request": "launch",
+            "module": "gotocpc",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+            },
+            "args": ["--project", "testing2"] 
+        },
+        {
+            "name": "FILE",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "SDK4BASIC_PATH": "${workspaceFolder}/software",
+            },
+            "args": ["arg1_value", "arg2_value"] 
+        }
+    ]
+}
