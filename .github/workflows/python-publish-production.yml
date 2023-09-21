@@ -37,6 +37,6 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.TEST_PYPI_SECRET }}
-        skip-existing: false
+        skip-existing: true
         verbose: true
         
