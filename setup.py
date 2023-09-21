@@ -1,11 +1,16 @@
 from setuptools import setup, find_packages
 from gotocpc import __version__ as version
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 VERSION = version
 DESCRIPTION = 'Software Developer Kit for programming in Basic for Amstrad CPC'
 
 setup(
     name='gotocpc',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     version=VERSION,
     author="Destroyer",
     author_email="<destroyer.dcf@gmail.com>",
