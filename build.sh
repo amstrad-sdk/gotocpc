@@ -8,7 +8,7 @@ reset_color='\033[0m'
 
 generateChanges() {
     carpeta="VERSIONS"
-    archivo_concatenado="CHANGES"
+    archivo_concatenado="CHANGES.md"
     if [ -e "CHANGES" ]; then
         rm CHANGES
     fi
@@ -23,7 +23,6 @@ generateChanges() {
     for archivo in $archivos; do
         cat "$archivo" >> "$archivo_concatenado"
     done
-    echo "Archivos concatenados en $archivo_concatenado\n"
 }
 
 echo ""
@@ -68,7 +67,7 @@ echo ""
 if [ -z "$1" ]
 then
     generateChanges
-    CHANGES=`cat CHANGES`
+    CHANGES=`cat CHANGES.md`
     echo "$CHANGES"
     echo ""
     archivo="$PROJECT/__init__.py"
@@ -80,9 +79,11 @@ then
     echo ""
 else
     version=$1
-    version_a_verificar="VERSIONS/$version"
+    version_a_verificar="VERSIONS/$version.md"
     if [ -e "$version_a_verificar" ]; then
-        echo "El archivo $version_a_verificar existe."
+        CHANGES=`cat $version_a_verificar`
+        echo "$CHANGES"
+        generateChanges
         echo ""
     else
         echo "${rojo}ERROR: El archivo $version_a_verificar no existe.${reset_color}"
@@ -90,7 +91,7 @@ else
     fi
     echo "__version__ = '$version'" > "$PROJECT/__init__.py"
     echo "================================================================================================"
-    echo "[*] COMPILAMOS SOFTWARE CON NUEVA VERSION $1"
+    echo "[*] COMPILAMOS SOFTWARE CON NUEVA VERSION $version"
     echo "================================================================================================"
     echo ""
    
