@@ -52,6 +52,7 @@ echo ""
         echo "El directorio no existe: $directorio_a_eliminar"
     fi
 
+
 echo ""
 echo "================================================================================================"
 echo "[*] INSTALACION DE DEPENDENCIAS"
