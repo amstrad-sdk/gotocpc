@@ -40,6 +40,7 @@ echo "[*] INSTALACION DE DEPENDENCIAS DE COMPILACION"
 echo "================================================================================================"
 echo ""
 pip install build
+pip install --upgrade twine
 echo ""
 echo "================================================================================================"
 echo  "[*] HISTORIAL DE CAMBIOS"
