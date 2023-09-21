@@ -10,7 +10,7 @@ name: Upload Python Package
 
 on:
   push:
-    tags:
+      tags:
       - '*.*.*'
 
 permissions:
@@ -23,15 +23,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set env
-      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        ./build.sh ${{ env.RELEASE_VERSION }}
+        python -m pip install --upgrade pip
+        pip install build
+    - name: Build package
+      run: python -m build
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
