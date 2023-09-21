@@ -73,6 +73,9 @@ echo "==========================================================================
 echo "[*] CREAMOS TAG $1 Y PUBLICAMOS EN GITHUB"
 echo "================================================================================================"
 echo ""
+git add .
+git commit -m "Generate Tag"
+git push
 git tag $version -m "$CHANGES"
 git push origin $version
 echo ""
