@@ -1,5 +1,5 @@
-include gotocpc/includes *.ccz80
-include gotocpc/templates *.j2
+include gotocpc/includes/*.ccz80
+include gotocpc/templates/*.j2
 include gotocpc/bin/linux/iDSK
 include gotocpc/bin/linux/martine
 include gotocpc/bin/darwin/iDSK
