@@ -36,17 +36,17 @@ echo ""
 
 echo ""
 echo "================================================================================================"
-echo "[*] INSTALACION DE DEPENDENCIAS DE COMPILACION"
-echo "================================================================================================"
-echo ""
-pip install build
-pip install --upgrade twine
-echo ""
-echo "================================================================================================"
 echo  "[*] HISTORIAL DE CAMBIOS"
 echo "================================================================================================"
 echo ""
 echo "$CHANGES"
+echo ""
+echo "================================================================================================"
+echo "[*] INSTALACION DE DEPENDENCIAS"
+echo "================================================================================================"
+echo ""
+pip install build
+pip install --upgrade twine
 echo ""
 if [ -z "$1" ]
 then
@@ -71,14 +71,28 @@ python3 -m build
 
 echo ""
 echo "================================================================================================"
-echo "[*] CREAMOS TAG $1 Y PUBLICAMOS EN GITHUB"
+echo "[*] CHEQUEAMOS FORMATE README.md"
 echo "================================================================================================"
 echo ""
-git add .
-git commit -m "Generate Tag"
-git push
-git tag $version -m "$CHANGES"
-git push origin $version
+twine check dist/*
+
+if [ -z "$1" ]
+then
+    echo ""
+else
+    echo ""
+    echo "================================================================================================"
+    echo "[*] CREAMOS TAG $1 Y PUBLICAMOS EN GITHUB"
+    echo "================================================================================================"
+    echo ""
+    git add .
+    git commit -m "Generate Tag"
+    git push
+    git tag $version -m "$CHANGES"
+    git push origin $version
+fi
+
+
 echo ""
 echo "================================================================================================"
 echo "[*] COMPILACION FINALIZADA $version"
