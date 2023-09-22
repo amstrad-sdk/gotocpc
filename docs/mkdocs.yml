@@ -1,0 +1,7 @@
+site_name: GOTOCPC
+nav:
+  - Inicio: 'index.md'
+  - 'Guia de usuario':
+    - Sistema de Autenticacion: 'autenticacion.md'
+  - Acerca de: 'about.md'
+theme: readthedocs
